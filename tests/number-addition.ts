@@ -3,10 +3,10 @@
  * Expected result is 3.
  */
 
-let a : number = 1
-let b : number = 2
+let a: number = 1
+let b: number = 2
 
-let c : number
+let c: number
 
 c = a + b
 
