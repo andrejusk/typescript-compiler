@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@types/node": "^9.4.6",
+    "colors": "^1.1.2",
     "fs": "0.0.1-security",
     "typescript": "^2.7.2"
   },
