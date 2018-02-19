@@ -55,6 +55,9 @@ import fs = require('fs')
 
 export function analyse(filePath) {
     fs.readFileSync(filePath, 'utf8')
+    console.log("Opened " + filePath)
+
+
 
     
 }
