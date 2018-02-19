@@ -1,5 +1,6 @@
 import fs = require('fs')
 import lex = require('./src/lexical-analyser')
+import colors = require('colors/safe')
 
 let filePath = undefined;
 
@@ -10,8 +11,9 @@ if (process.argv.length > 1) {
 
 try {
     fs.readFileSync(filePath, 'utf8')
-    lex.analyse(filePath)
+    lex.parseFile(filePath)
 } catch (e) {
     /* If incorrect */
-    console.log("Usage: ts-node index.js <file>")
+    //console.log("Usage: ts-node index.js <file>")
+    console.log(colors.red(e))
 }
