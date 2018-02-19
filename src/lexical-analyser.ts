@@ -2,19 +2,35 @@
     Tokens 
 */
 
+class Token {
+    type
+    lexim
+    value
+}
+
+let WHITESPACE: Token[] = [
+    { 'type': 'SPACE',      'lexim': ' ',   'value': null },
+    { 'type': 'NEWLINE',    'lexim': '\n',  'value': null },
+    { 'type': 'TAB',        'lexim': '\t',  'value': null }
+]
+
+let PUNCTUATION: Token[] = [
+    { 'type': 'COMMA',          'lexim': ',',   'value': null },
+    { 'type': 'COLON',          'lexim': ':',   'value': null },
+    { 'type': 'SEIMCOLON',      'lexim': ';',   'value': null },
+    { 'type': 'DOT',            'lexim': '.',   'value': null },
+    { 'type': 'SINGLE_QUOTE',   'lexim': '\'',  'value': null },
+    { 'type': 'DOUBLE_QUOTE',   'lexim': '.',   'value': null },
+    { 'type': 'BACKSLASH',      'lexim': '\\',  'value': null },
+    { 'type': 'FORWARDSLASH',   'lexim': '/',   'value': null },
+    { 'type': 'ASTERISK',       'lexim': '*',   'value': null },
+    { 'type': 'EXCLAMATION',    'lexim': '!',   'value': null },
+    { 'type': 'AMPERSAND',      'lexim': '&',   'value': null }
+]
+
 enum TOKEN_ID {
+
     /* Punctuation */
-    COMMA = ',',
-    COLON = ':',
-    SEIMCOLON = ';',
-    DOT = '.',
-    SINGLE_QUOTE = '\'',
-    DOUBLE_QUOTE = '.',
-    BACKSLASH = '\\',
-    FORWARDSLASH = '/',
-    ASTERISK = '*',
-    EXCLAMATION = '!',
-    AMPERSAND = '&',
 
     /* Arithmetic */
     EQUALS = '=',
@@ -44,32 +60,27 @@ enum TOKEN_ID {
 
 
 
-//rethink token
-class Token {
-    ID: TOKEN_ID
-    lexim
-    value
-}
-
-
-
 import fs = require('fs')
 import colors = require('colors/safe')
 
-let contents
+let content
 let currentCharacter: number = 0
 
 export function parseFile(filePath) {
-    contents = fs.readFileSync(filePath, 'utf8')
+    let rawContent = fs.readFileSync(filePath, 'utf8')
+
     console.log(colors.blue('[INFO]') + ' Opened ' + filePath)
-    console.log(colors.yellow('[DEBUG]') + ' Contents:\n' + colors.grey(contents))
+    console.log(colors.yellow('[DEBUG]') + ' Contents:\n' + colors.grey(rawContent))
+
+    content = rawContent.split('')
+
     console.log(colors.blue('[INFO]') + ' Running lexical analyser')
 
     let tempToken: Token
     
     while (true) {
         tempToken = parseCharacter()
-        if (currentCharacter >= contents.length) {
+        if (currentCharacter >= content.length) {
             break;
         }
     }
@@ -78,17 +89,31 @@ export function parseFile(filePath) {
 }
 
 function parseCharacter(): Token {
-    let tempCharacter = contents.split('')[currentCharacter]
-    //console.log(contents.split(''))
+    let tempCharacter = content[currentCharacter]
+
+    switch (tempCharacter) {
+        case ' ': {
+            tempCharacter = 'SPACE'
+            break
+        }
+        case '\n': {
+            tempCharacter = 'NEWLINE'
+            break
+        }
+        case '\t': {
+            tempCharacter = 'TAB'
+            break
+        }
+    }
+
+    console.log(colors.yellow('[DEBUG]') + ' Character at ' + colors.yellow(currentCharacter) + ': ' + colors.grey(tempCharacter))
 
     //Check if parsed
     if (true) {
         currentCharacter++
     }
 
-    console.log(colors.yellow('[DEBUG]') + ' Character at ' + colors.yellow(currentCharacter) + ': ' + colors.grey(tempCharacter))
-
-    return { 'ID': -1, 'lexim': undefined, 'value': undefined }
+    return { 'type': undefined, 'lexim': undefined, 'value': undefined }
 }
 
 function peekCharacter() {
