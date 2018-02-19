@@ -43,21 +43,39 @@ enum TOKEN_ID {
 
 
 
-
+//rethink token
 class Token {
     ID: TOKEN_ID
+    lexim
     value
 }
 
 
 
 import fs = require('fs')
+import colors = require('colors/safe')
 
-export function analyse(filePath) {
-    fs.readFileSync(filePath, 'utf8')
-    console.log("Opened " + filePath)
+let currentCharacter: number = 0
 
+export function parseFile(filePath) {
+    let contents = fs.readFileSync(filePath, 'utf8')
+    console.log(colors.blue('[INFO]') + ' Opened ' + filePath)
+    console.log(colors.yellow('[DEBUG]') + ' Contents:\n' + colors.grey(contents))
+    console.log(colors.blue('[INFO]') + ' Running lexical analyser')
 
-
+    let tempToken: Token
+    /*
+    while (true) {
+        tempToken = parseCharacter()
+    }
+    */
     
+}
+
+function parseCharacter(character) {
+
+}
+
+function peekCharacter() {
+
 }
