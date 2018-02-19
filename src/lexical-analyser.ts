@@ -1,8 +1,9 @@
 /* 
-    Tokens 
-*/
+ * Tokens 
+ */
 
 class Token {
+    name
     lexim
     value
 }
@@ -12,53 +13,70 @@ interface SymbolMap {
 }
 
 const WHITESPACE: SymbolMap = {
-    'SPACE':    ' ',
-    'NEWLINE':  '\n',
-    'TAB':      '\t'
+    'SPACE':        ' ',
+    'RETURN':       '\r',
+    'NEWLINE':      '\n',
+    'TAB':          '\t',
+    'V_TAB':        '\v',
+    'BACKSPACE':    '\b',
+    'FORM_FEED':    '\f',
+    'EOF':          '\0'
 }
 
-function mapContains(map: SymbolMap, term: string): boolean {
+const PUNCTUATION: SymbolMap = {
+    'COMMA':                    ',',
+    'COLON':                    ':',
+    'SEIMCOLON':                ';',
+    'DOT':                      '.',
+    'SINGLE_QUOTE':             '\'',
+    'DOUBLE_QUOTE':             '.',
+    'BACKSLASH':                '\\',
+    'FORWARDSLASH':             '/',
+    'ASTERISK':                 '*',
+    'EXCLAMATION':              '!',
+    'AMPERSAND':                '&',
+    'EQUALS':                   '=',
+    'PLUS':                     '+',
+    'MINUS':                    '-',  
+    'OPEN_PARENTHESIS':         '(',
+    'CLOSE_PARENTHESIS':        ')',
+    'OPEN_CURLY_BRACKET':       '{',
+    'CLOSE_CURLY_BRACKET':      '}',
+    'OPEN_ANGLE_BRACKET':       '<',
+    'CLOSE_ANGLE_BRACKET':      '>',
+    'OPEN_SQUARE_BRACKET':      '[',
+    'CLOSE_SQUARE_BRACKET':     ']'
+}
+
+/**
+ * Returns whether map contains term.
+ * @param map Map to search.
+ * @param term Term to look for.
+ */
+function searchMap(map: SymbolMap, term: string): boolean {
     for (let key in map) {
-        if (map[key].indexOf(term) != -1) {
+        if (map[key] == term) {
             return true;
         }
     }
     return false;
 }
 
-/*
-let PUNCTUATION: Token[] = [
-    { 'name': 'COMMA',          'lexim': ',',   'value': null },
-    { 'name': 'COLON',          'lexim': ':',   'value': null },
-    { 'name': 'SEIMCOLON',      'lexim': ';',   'value': null },
-    { 'name': 'DOT',            'lexim': '.',   'value': null },
-    { 'name': 'SINGLE_QUOTE',   'lexim': '\'',  'value': null },
-    { 'name': 'DOUBLE_QUOTE',   'lexim': '.',   'value': null },
-    { 'name': 'BACKSLASH',      'lexim': '\\',  'value': null },
-    { 'name': 'FORWARDSLASH',   'lexim': '/',   'value': null },
-    { 'name': 'ASTERISK',       'lexim': '*',   'value': null },
-    { 'name': 'EXCLAMATION',    'lexim': '!',   'value': null },
-    { 'name': 'AMPERSAND',      'lexim': '&',   'value': null }
-]
-*/
+/**
+ * Returns term's key in map. Null if doesn't exist.
+ * @param map Map to search.
+ * @param term Term to look for.
+ */
+function getKey(map: SymbolMap, term: string): string {
+    for (let key in map) {
+        if (map[key] == term) {
+            return key;
+        }
+    }
+    return null;
+}
 
 enum TOKEN_ID {
-
-    /* Punctuation */
-
-    /* Arithmetic */
-    EQUALS = '=',
-    PLUS = '+',
-
-    /* Brackets */
-    OPEN_PARENTHESIS = '(',
-    CLOSE_PARENTHESIS = ')',
-    OPEN_CURLY_BRACKET = '{',
-    CLOSE_CURLY_BRACKET = '}',
-    OPEN_ANGLE_BRACKET = '<',
-    CLOSE_ANGLE_BRACKET = '>',
-    OPEN_SQUARE_BRACKET = '[',
-    CLOSE_SQUARE_BRACKET = ']',
 
     /* Keywords */
     LET = 'let',
@@ -77,51 +95,129 @@ enum TOKEN_ID {
 import fs = require('fs')
 import colors = require('colors/safe')
 
+let debugFlag
+
 let content
-let currentCharacter: number = 0
+let currentCharacterIndex: number = 0
 
-export function parseFile(filePath) {
+export function parseFile(filePath, debug: boolean = false) {
+    debugFlag = debug
+
     let rawContent = fs.readFileSync(filePath, 'utf8')
-
-    console.log(colors.blue('[INFO]') + ' Opened ' + filePath)
-    console.log(colors.yellow('[DEBUG]') + ' Contents:\n' + colors.grey(rawContent))
-
     content = rawContent.split('')
 
-    console.log(colors.blue('[INFO]') + ' Running lexical analyser')
-
-    let tempToken: Token
+    let tokens = new Array()
     
     while (true) {
-        tempToken = parseCharacter()
-        if (currentCharacter >= content.length) {
+        /* Parse character */
+        tokens.push(parseCharacter())
+        /* EOF */
+        if (currentCharacterIndex >= content.length) {
             break;
         }
     }
-    
-    
+
+    return tokens
+}
+
+function parseNextCharacter(): Token {
+    nextCharacter()
+    return parseCharacter()
 }
 
 function parseCharacter(): Token {
-    /* Get character */
-    let tempCharacter = content[currentCharacter]
-
-    /* Skip white space */
-    if (mapContains(WHITESPACE, tempCharacter)) {
-        currentCharacter++
-        return parseCharacter()
+    /* Skip whitespace */
+    let tempKey = getKey(WHITESPACE, getCurrentCharacter())
+    if (tempKey != null) {
+        logWhitespace(tempKey)
+        return parseNextCharacter()
     }
-    
-    //Skip comments
-    //Pass EOF
-    
-    console.log(colors.yellow('[DEBUG]') + ' Character at ' + colors.yellow(currentCharacter) + ': ' + colors.grey(tempCharacter))
-    //Check if parsed
-    currentCharacter++
 
-    return { 'lexim': undefined, 'value': undefined }
+    /* Skip line comments */
+    if (getCurrentCharacter() == PUNCTUATION['FORWARDSLASH'] && peekNextCharacter() == PUNCTUATION['FORWARDSLASH']) {
+        skipUntil(WHITESPACE['NEWLINE'])
+    }
+    /* Skip block comments */
+    if (getCurrentCharacter() == PUNCTUATION['FORWARDSLASH'] && peekNextCharacter() == PUNCTUATION['ASTERISK']) {
+        while (peekNextCharacter() != PUNCTUATION['FORWARDSLASH']) {
+            nextCharacter()
+            skipUntil(PUNCTUATION['ASTERISK'])
+        }
+        nextCharacter()
+        return parseNextCharacter()
+    }
+
+    /* Parse punctuation */
+    tempKey = getKey(PUNCTUATION, getCurrentCharacter())
+    if (tempKey != null) {
+        logPunctuation(tempKey)
+        nextCharacter()
+        return { 'name': tempKey, 'lexim': PUNCTUATION[tempKey], 'value': undefined }
+    }
+
+    logCharacter()
+    nextCharacter()
+
+    return { 'name': undefined, 'lexim': getCurrentCharacter(), 'value': undefined }
 }
 
-function peekCharacter() {
 
+
+/* 
+ * Debug print functions 
+ */ 
+
+function logWhitespace(key) {
+    //console.log(colors.yellow('[DEBUG] ') + colors.blue(key) + ' at ' + colors.yellow(getCurrentCharacterIndex()))
+}
+
+function logPunctuation(key) {
+    if (!debugFlag) { 
+        return
+    }
+    console.log(colors.yellow('[DEBUG] ') + colors.cyan(key) + ' at ' + colors.yellow(getCurrentCharacterIndex()))
+}
+
+function logCharacter() {
+    if (!debugFlag) {
+        return
+    }
+    console.log(
+        colors.yellow('[DEBUG] ') 
+        + 'Character at ' 
+        + colors.yellow(getCurrentCharacterIndex()) 
+        + ': ' 
+        + colors.green(getCurrentCharacter())
+        + ' ['
+        + colors.magenta(getCurrentCharacter().charCodeAt(0))
+        + ']'
+    )
+}
+
+
+
+/* 
+ * Helper functions 
+ */
+
+function nextCharacter() {
+    currentCharacterIndex++
+}
+
+function getCurrentCharacterIndex(): number {
+    return currentCharacterIndex
+}
+
+function getCurrentCharacter(): string {
+    return content[currentCharacterIndex]
+}
+
+function peekNextCharacter(): string {
+    return content[currentCharacterIndex + 1]
+}
+
+function skipUntil(target: string) {
+    while (getCurrentCharacter() != target) {
+        nextCharacter()
+    }
 }
