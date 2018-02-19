@@ -2,11 +2,13 @@
   "name": "cs2co16-compiler",
   "version": "0.0.1",
   "description": "Compiler for CS2CO16 Coursework",
-  "main": "index.js",
+  "main": "index.ts",
   "directories": {
     "test": "test"
   },
   "dependencies": {
+    "@types/node": "^9.4.6",
+    "fs": "0.0.1-security",
     "typescript": "^2.7.2"
   },
   "devDependencies": {
@@ -20,6 +22,7 @@
     "typings": "^2.1.1"
   },
   "scripts": {
+    "start": "ts-node index.ts",
     "test": "mocha -r ts-node/register test/*.spec.ts"
   },
   "repository": {
