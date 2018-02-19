@@ -7,6 +7,13 @@ let COMMA = ','
 let COLON = ':'
 let SEIMCOLON = ';'
 let DOT = '.'
+let SINGLE_QUOTE = '\''
+let DOUBLE_QUOTE = '.'
+let BACKSLASH = '\\'
+let FORWARDSLASH = '/'
+let ASTERISK = '*'
+let EXCLAMATION = '!'
+let AMPERSAND = '&'
 
 /* Arithmetic */
 let EQUALS = '='
@@ -27,3 +34,11 @@ let LET = 'let'
 
 /* Variable objects */
 let NUMBER = 'number'
+
+import fs = require('fs')
+
+export function analyse(filePath) {
+    fs.readFileSync(filePath, 'utf8')
+
+    
+}
