@@ -2,38 +2,54 @@
     Tokens 
 */
 
-/* Punctuation */
-let COMMA = ','
-let COLON = ':'
-let SEIMCOLON = ';'
-let DOT = '.'
-let SINGLE_QUOTE = '\''
-let DOUBLE_QUOTE = '.'
-let BACKSLASH = '\\'
-let FORWARDSLASH = '/'
-let ASTERISK = '*'
-let EXCLAMATION = '!'
-let AMPERSAND = '&'
+enum TOKEN_ID {
+    /* Punctuation */
+    COMMA = ',',
+    COLON = ':',
+    SEIMCOLON = ';',
+    DOT = '.',
+    SINGLE_QUOTE = '\'',
+    DOUBLE_QUOTE = '.',
+    BACKSLASH = '\\',
+    FORWARDSLASH = '/',
+    ASTERISK = '*',
+    EXCLAMATION = '!',
+    AMPERSAND = '&',
 
-/* Arithmetic */
-let EQUALS = '='
-let PLUS = '+'
+    /* Arithmetic */
+    EQUALS = '=',
+    PLUS = '+',
 
-/* Brackets */
-let OPEN_PARENTHESIS = '('
-let CLOSE_PARENTHESIS = ')'
-let OPEN_CURLY_BRACKET = '{'
-let CLOSE_CURLY_BRACKET = '}'
-let OPEN_ANGLE_BRACKET = '<'
-let CLOSE_ANGLE_BRACKET = '>'
-let OPEN_SQUARE_BRACKET = '['
-let CLOSE_SQUARE_BRACKET = ']'
+    /* Brackets */
+    OPEN_PARENTHESIS = '(',
+    CLOSE_PARENTHESIS = ')',
+    OPEN_CURLY_BRACKET = '{',
+    CLOSE_CURLY_BRACKET = '}',
+    OPEN_ANGLE_BRACKET = '<',
+    CLOSE_ANGLE_BRACKET = '>',
+    OPEN_SQUARE_BRACKET = '[',
+    CLOSE_SQUARE_BRACKET = ']',
 
-/* Keywords */
-let LET = 'let'
+    /* Keywords */
+    LET = 'let',
 
-/* Variable objects */
-let NUMBER = 'number'
+    /* Variable objects */
+    NUMBER = 'number',
+
+    /* Reserved statements */
+    PRINT = 'console.log'
+
+}
+
+
+
+
+class Token {
+    ID: TOKEN_ID
+    value
+}
+
+
 
 import fs = require('fs')
 
