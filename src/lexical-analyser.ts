@@ -3,30 +3,44 @@
 */
 
 class Token {
-    type
     lexim
     value
 }
 
-let WHITESPACE: Token[] = [
-    { 'type': 'SPACE',      'lexim': ' ',   'value': null },
-    { 'type': 'NEWLINE',    'lexim': '\n',  'value': null },
-    { 'type': 'TAB',        'lexim': '\t',  'value': null }
-]
+interface SymbolMap {
+    [name: string]: string
+}
 
+const WHITESPACE: SymbolMap = {
+    'SPACE':    ' ',
+    'NEWLINE':  '\n',
+    'TAB':      '\t'
+}
+
+function mapContains(map: SymbolMap, term: string): boolean {
+    for (let key in map) {
+        if (map[key].indexOf(term) != -1) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/*
 let PUNCTUATION: Token[] = [
-    { 'type': 'COMMA',          'lexim': ',',   'value': null },
-    { 'type': 'COLON',          'lexim': ':',   'value': null },
-    { 'type': 'SEIMCOLON',      'lexim': ';',   'value': null },
-    { 'type': 'DOT',            'lexim': '.',   'value': null },
-    { 'type': 'SINGLE_QUOTE',   'lexim': '\'',  'value': null },
-    { 'type': 'DOUBLE_QUOTE',   'lexim': '.',   'value': null },
-    { 'type': 'BACKSLASH',      'lexim': '\\',  'value': null },
-    { 'type': 'FORWARDSLASH',   'lexim': '/',   'value': null },
-    { 'type': 'ASTERISK',       'lexim': '*',   'value': null },
-    { 'type': 'EXCLAMATION',    'lexim': '!',   'value': null },
-    { 'type': 'AMPERSAND',      'lexim': '&',   'value': null }
+    { 'name': 'COMMA',          'lexim': ',',   'value': null },
+    { 'name': 'COLON',          'lexim': ':',   'value': null },
+    { 'name': 'SEIMCOLON',      'lexim': ';',   'value': null },
+    { 'name': 'DOT',            'lexim': '.',   'value': null },
+    { 'name': 'SINGLE_QUOTE',   'lexim': '\'',  'value': null },
+    { 'name': 'DOUBLE_QUOTE',   'lexim': '.',   'value': null },
+    { 'name': 'BACKSLASH',      'lexim': '\\',  'value': null },
+    { 'name': 'FORWARDSLASH',   'lexim': '/',   'value': null },
+    { 'name': 'ASTERISK',       'lexim': '*',   'value': null },
+    { 'name': 'EXCLAMATION',    'lexim': '!',   'value': null },
+    { 'name': 'AMPERSAND',      'lexim': '&',   'value': null }
 ]
+*/
 
 enum TOKEN_ID {
 
@@ -89,31 +103,23 @@ export function parseFile(filePath) {
 }
 
 function parseCharacter(): Token {
+    /* Get character */
     let tempCharacter = content[currentCharacter]
 
-    switch (tempCharacter) {
-        case ' ': {
-            tempCharacter = 'SPACE'
-            break
-        }
-        case '\n': {
-            tempCharacter = 'NEWLINE'
-            break
-        }
-        case '\t': {
-            tempCharacter = 'TAB'
-            break
-        }
-    }
-
-    console.log(colors.yellow('[DEBUG]') + ' Character at ' + colors.yellow(currentCharacter) + ': ' + colors.grey(tempCharacter))
-
-    //Check if parsed
-    if (true) {
+    /* Skip white space */
+    if (mapContains(WHITESPACE, tempCharacter)) {
         currentCharacter++
+        return parseCharacter()
     }
+    
+    //Skip comments
+    //Pass EOF
+    
+    console.log(colors.yellow('[DEBUG]') + ' Character at ' + colors.yellow(currentCharacter) + ': ' + colors.grey(tempCharacter))
+    //Check if parsed
+    currentCharacter++
 
-    return { 'type': undefined, 'lexim': undefined, 'value': undefined }
+    return { 'lexim': undefined, 'value': undefined }
 }
 
 function peekCharacter() {
