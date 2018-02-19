@@ -37,8 +37,9 @@ enum TOKEN_ID {
     NUMBER = 'number',
 
     /* Reserved statements */
-    PRINT = 'console.log'
+    PRINT = 'console.log',
 
+    UNKNOWN = -1
 }
 
 
@@ -55,25 +56,39 @@ class Token {
 import fs = require('fs')
 import colors = require('colors/safe')
 
+let contents
 let currentCharacter: number = 0
 
 export function parseFile(filePath) {
-    let contents = fs.readFileSync(filePath, 'utf8')
+    contents = fs.readFileSync(filePath, 'utf8')
     console.log(colors.blue('[INFO]') + ' Opened ' + filePath)
     console.log(colors.yellow('[DEBUG]') + ' Contents:\n' + colors.grey(contents))
     console.log(colors.blue('[INFO]') + ' Running lexical analyser')
 
     let tempToken: Token
-    /*
+    
     while (true) {
         tempToken = parseCharacter()
+        if (currentCharacter >= contents.length) {
+            break;
+        }
     }
-    */
+    
     
 }
 
-function parseCharacter(character) {
+function parseCharacter(): Token {
+    let tempCharacter = contents.split('')[currentCharacter]
+    //console.log(contents.split(''))
 
+    //Check if parsed
+    if (true) {
+        currentCharacter++
+    }
+
+    console.log(colors.yellow('[DEBUG]') + ' Character at ' + colors.yellow(currentCharacter) + ': ' + colors.grey(tempCharacter))
+
+    return { 'ID': -1, 'lexim': undefined, 'value': undefined }
 }
 
 function peekCharacter() {
