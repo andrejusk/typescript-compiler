@@ -11,9 +11,22 @@ if (process.argv.length > 1) {
 
 try {
     fs.readFileSync(filePath, 'utf8')
-    lex.parseFile(filePath)
+    logInfo('Opened ' + filePath)
+
+    logInfo('Running lexical analyser')
+    let tokens = lex.parseFile(filePath, true)
+
+    logInfo('Running parser')
 } catch (e) {
     /* If incorrect */
-    //console.log("Usage: ts-node index.js <file>")
-    console.log(colors.red(e))
+    console.log("Usage: ts-node index.js <file>")
+    logError(e)
+}
+
+function logInfo(message: string) {
+    console.log(colors.blue('[INFO] ') + message)
+}
+
+function logError(message: string) {
+    console.log(colors.red(message))
 }
