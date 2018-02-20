@@ -100,6 +100,11 @@ let debugFlag
 let content
 let currentCharacterIndex: number = 0
 
+/**
+ * Parses file using lexical analysis.
+ * @param filePath File to parse.
+ * @param debug Print debug messages.
+ */
 export function parseFile(filePath, debug: boolean = false) {
     debugFlag = debug
 
@@ -120,11 +125,17 @@ export function parseFile(filePath, debug: boolean = false) {
     return tokens
 }
 
+/**
+ * Increments current character index and parses character.
+ */
 function parseNextCharacter(): Token {
     nextCharacter()
     return parseCharacter()
 }
 
+/**
+ * Parses character and returns its lexical token.
+ */
 function parseCharacter(): Token {
     /* Skip whitespace */
     let tempKey = getKey(WHITESPACE, getCurrentCharacter())
@@ -167,10 +178,21 @@ function parseCharacter(): Token {
  * Debug print functions 
  */ 
 
+/**
+ * Logs current character as whitespace.
+ * @param key Key to log as.
+ */
 function logWhitespace(key) {
-    //console.log(colors.yellow('[DEBUG] ') + colors.blue(key) + ' at ' + colors.yellow(getCurrentCharacterIndex()))
+    if (!debugFlag) {
+        return
+    }
+    console.log(colors.yellow('[DEBUG] ') + colors.blue(key) + ' at ' + colors.yellow(getCurrentCharacterIndex()))
 }
 
+/**
+ * Logs current character as punctuation.
+ * @param key Key to log as.
+ */
 function logPunctuation(key) {
     if (!debugFlag) { 
         return
@@ -178,6 +200,10 @@ function logPunctuation(key) {
     console.log(colors.yellow('[DEBUG] ') + colors.cyan(key) + ' at ' + colors.yellow(getCurrentCharacterIndex()))
 }
 
+/**
+ * Logs current character information to console.
+ * Only works if debug flag is set to 1.
+ */
 function logCharacter() {
     if (!debugFlag) {
         return
@@ -200,22 +226,38 @@ function logCharacter() {
  * Helper functions 
  */
 
+/**
+ * Increments current index.
+ */
 function nextCharacter() {
     currentCharacterIndex++
 }
 
+/**
+ * Returns current index.
+ */
 function getCurrentCharacterIndex(): number {
     return currentCharacterIndex
 }
 
+/**
+ * Returns current character in file.
+ */
 function getCurrentCharacter(): string {
     return content[currentCharacterIndex]
 }
 
+/**
+ * Returns next character in file.
+ */
 function peekNextCharacter(): string {
     return content[currentCharacterIndex + 1]
 }
 
+/**
+ * Moves index to next occurance of target.
+ * @param target Character to look for.
+ */
 function skipUntil(target: string) {
     while (getCurrentCharacter() != target) {
         nextCharacter()
