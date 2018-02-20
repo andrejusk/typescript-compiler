@@ -147,6 +147,7 @@ function parseCharacter(): Token {
     /* Skip line comments */
     if (getCurrentCharacter() == PUNCTUATION['FORWARDSLASH'] && peekNextCharacter() == PUNCTUATION['FORWARDSLASH']) {
         skipUntil(WHITESPACE['NEWLINE'])
+        return parseNextCharacter()
     }
     /* Skip block comments */
     if (getCurrentCharacter() == PUNCTUATION['FORWARDSLASH'] && peekNextCharacter() == PUNCTUATION['ASTERISK']) {
