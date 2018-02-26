@@ -48,18 +48,19 @@ const PUNCTUATION: SymbolMap = {
     'CLOSE_SQUARE_BRACKET':     ']'
 }
 
+const RESERVED: SymbolMap = {
+    'LET':                  'let',
+    'NUMBER':               'number',
+    'PRINT':                'console.log'
+}
+
 /**
  * Returns whether map contains term.
  * @param map Map to search.
  * @param term Term to look for.
  */
 function searchMap(map: SymbolMap, term: string): boolean {
-    for (let key in map) {
-        if (map[key] == term) {
-            return true;
-        }
-    }
-    return false;
+    return getKey(map, term) != null
 }
 
 /**
@@ -70,24 +71,10 @@ function searchMap(map: SymbolMap, term: string): boolean {
 function getKey(map: SymbolMap, term: string): string {
     for (let key in map) {
         if (map[key] == term) {
-            return key;
+            return key
         }
     }
-    return null;
-}
-
-enum TOKEN_ID {
-
-    /* Keywords */
-    LET = 'let',
-
-    /* Variable objects */
-    NUMBER = 'number',
-
-    /* Reserved statements */
-    PRINT = 'console.log',
-
-    UNKNOWN = -1
+    return null
 }
 
 
@@ -118,12 +105,14 @@ export function parseFile(filePath, debug: boolean = false) {
         tokens.push(parseCharacter())
         /* EOF */
         if (currentCharacterIndex >= content.length) {
-            break;
+            break
         }
     }
 
     return tokens
 }
+
+
 
 /**
  * Increments current character index and parses character.
@@ -176,6 +165,50 @@ function parseCharacter(): Token {
 
 
 /* 
+ * Helper functions 
+ */
+
+/**
+ * Increments current index.
+ */
+function nextCharacter() {
+    currentCharacterIndex++
+}
+
+/**
+ * Returns current index.
+ */
+function getCurrentCharacterIndex(): number {
+    return currentCharacterIndex
+}
+
+/**
+ * Returns current character in file.
+ */
+function getCurrentCharacter(): string {
+    return content[currentCharacterIndex]
+}
+
+/**
+ * Returns next character in file.
+ */
+function peekNextCharacter(): string {
+    return content[currentCharacterIndex + 1]
+}
+
+/**
+ * Moves index to next occurance of target.
+ * @param target Character to look for.
+ */
+function skipUntil(target: string) {
+    while (getCurrentCharacter() != target) {
+        nextCharacter()
+    }
+}
+
+
+
+/* 
  * Debug print functions 
  */ 
 
@@ -219,48 +252,4 @@ function logCharacter() {
         + colors.magenta(getCurrentCharacter().charCodeAt(0))
         + ']'
     )
-}
-
-
-
-/* 
- * Helper functions 
- */
-
-/**
- * Increments current index.
- */
-function nextCharacter() {
-    currentCharacterIndex++
-}
-
-/**
- * Returns current index.
- */
-function getCurrentCharacterIndex(): number {
-    return currentCharacterIndex
-}
-
-/**
- * Returns current character in file.
- */
-function getCurrentCharacter(): string {
-    return content[currentCharacterIndex]
-}
-
-/**
- * Returns next character in file.
- */
-function peekNextCharacter(): string {
-    return content[currentCharacterIndex + 1]
-}
-
-/**
- * Moves index to next occurance of target.
- * @param target Character to look for.
- */
-function skipUntil(target: string) {
-    while (getCurrentCharacter() != target) {
-        nextCharacter()
-    }
 }
