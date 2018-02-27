@@ -1,32 +1,27 @@
 
-/** Lexim types */
-enum Type {
-    'WHITESPACE',
-    'PUNCTUATION',
-    'IDENTIFIER',
-    'CONSTANT',
-    'RESERVED'
-}
+import { Type, TypeS, WHITESPACE, PUNCTUATION, RESERVED } from './types'
 
-/** Abbereviated lexeme types */
-enum TypeS {
-    'WHITE',
-    'PUNCT',
-    'IDENT',
-    'CONST',
-    'RESER'
-}
+declare global {
 
+    /** Holds vertical and horizontal character values */
+    class SourcePos {
+        h: number
+        v: number
+    }
 
+    /** Token class, value and lexeme optional */
+    class Token {
+        type: Type
+        name: string
+        lexeme: string
+        value: number
+        location: SourcePos
+    }
 
-/** Token class, value and lexeme optional */
-class Token {
-    type: Type
-    name: string
-    lexeme: string
-    value: number
-    v_location: number
-    h_location: number
+    /** Symbol to name mapping */
+    interface SymbolMap {
+        [name: string]: string
+    }
 }
 
 /**
@@ -34,14 +29,12 @@ class Token {
  * @param type Type of Token
  * @param name Name of Token
  * @param lexeme Lexim the Token was parsed from
- * @param location Location in source file
+ * @param location SourcePos in source file
  */
 function createToken(type: Type, name: string, lexeme: string): Token {
     let location: number = getCurrentCharacterIndex()
 
-    let position: Position = getLocation(location)
-    let v_location: number = position.v_location
-    let h_location: number = position.h_location
+    let position: SourcePos = getSourcePos(location)
 
     let value: number = undefined
 
@@ -57,23 +50,18 @@ function createToken(type: Type, name: string, lexeme: string): Token {
         'name':         name,
         'lexeme':       lexeme,
         'value':        value,
-        'v_location':   v_location,
-        'h_location':   h_location,
+        'location':     position,
     }
 }
 
 
-/** Position class, holds vertical and horizontal character values */
-class Position {
-    v_location: number
-    h_location: number
-}
+
 
 /**
  * Returns line number
  * @param position 
  */
-function getLocation(position: number): Position {
+function getSourcePos(position: number): SourcePos {
     let lines: number = 1
     let chars: number = 1
     let iterator: number = 0
@@ -87,67 +75,12 @@ function getLocation(position: number): Position {
         iterator++
     }
 
-    return { 'h_location': chars, 'v_location': lines }
+    return { 'h': chars, 'v': lines }
 }
 
 
 
-/** Symbol to name mapping */
-interface SymbolMap {
-    [name: string]: string
-}
 
-/** WHITE - Whitespace */
-const WHITESPACE: SymbolMap = {
-    'SPACE':        ' ',
-    'RETURN':       '\r',
-    'NEWLINE':      '\n',
-    'TAB':          '\t',
-    'V_TAB':        '\v',
-    'BACKSPACE':    '\b',
-    'FORM_FEED':    '\f',
-    'EOF':          '\0'
-}
-
-/** PUNCT - Punctuation */
-const PUNCTUATION: SymbolMap = {
-    'COMMA':        ',',
-    'COLON':        ':',
-    'SEIMCOLON':    ';',
-    'DOT':          '.',
-    'SINGLE_QUOTE': '\'',
-    'DOUBLE_QUOTE': '.',
-    'BACKSLASH':    '\\',
-    'FWDSLASH':     '/',
-    'ASTERISK':     '*',
-    'EXCLAMATION':  '!',
-    'AMPERSAND':    '&',
-    'EQUALS':       '=',
-    'PLUS':         '+',
-    'MINUS':        '-',  
-    'O_PAR':        '(',
-    'C_PAR':        ')',
-    'O_CUR_BR':     '{',
-    'C_CUR_BR':     '}',
-    'O_ANG_BR':     '<',
-    'C_ANG_BR':     '>',
-    'O_SQR_BR':     '[',
-    'C_SQR_BR':     ']'
-}
-
-/** IDENT - Identifier */
-const IDENTIFIER = 'IDENTIFIER'
-
-/** CONST - Constant */
-const CONSTANT = 'CONSTANT'
-
-/** RESER - Reserved */
-const RESERVED: SymbolMap = {
-    'LET':                  'let',
-    'NUMBER':               'number',
-    'CONSOLE':              'console',
-    'LOG':                  'log'
-}
 
 /**
  * Returns whether map contains term.
@@ -177,7 +110,6 @@ function getKey(map: SymbolMap, term: string): string {
 
 
 import fs = require('fs')
-import colors = require('colors/safe')
 import { getMaxListeners } from 'cluster'
 
 let debugFlag: boolean
@@ -369,6 +301,7 @@ function peekNextCharacter(): string {
 
 
 
+import colors = require('colors/safe')
 
 /** Debug print function */ 
 function log(Token: Token): void {
@@ -401,8 +334,8 @@ function log(Token: Token): void {
         colors.grey(`] `) +
         nameColor(`${Token.name}\t`) +
         colors.grey(`at `) +
-        colors.yellow(`${Token.v_location}`) +
+        colors.yellow(`${Token.location.v}`) +
         `:` +
-        colors.yellow(`${Token.h_location}`)
+        colors.yellow(`${Token.location.h}`)
     )
 }
