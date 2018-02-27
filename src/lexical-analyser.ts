@@ -381,9 +381,12 @@ function log(token: Token) {
     }
 
     console.log(
-        `\t` +
+        colors.blue(`  >>`) +
+        colors.grey(`\t[`) +
+        nameColor(`${Type_abbr[token.type]}`) +
+        colors.grey(`] `) +
         nameColor(`${token.name}\t`) +
-        `at ` +
+        colors.grey(`at `) +
         colors.yellow(`${token.v_location}`) +
         `:` +
         colors.yellow(`${token.h_location}`)
