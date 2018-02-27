@@ -1,3 +1,4 @@
+
 /** Lexim types */
 enum Type {
     'WHITESPACE',
@@ -21,9 +22,52 @@ enum Type_abbr {
 class Token {
     type: Type
     name: string
-    lexim?: string
-    value?: number
-    location: number
+    lexim: string
+    value: number
+    v_location: number
+    h_location: number
+}
+
+/** Position class, holds vertical and horizontal character values */
+class Position {
+    v_location: number
+    h_location: number
+}
+
+/**
+ * Creates and returns Token
+ * @param type Type of Token
+ * @param name Name of Token
+ * @param lexim Lexim the Token was parsed from
+ * @param location Location in source file
+ */
+function createToken(type: Type, name: string, lexim: string): Token {
+
+    let location = getCurrentCharacterIndex()
+
+    let position: Position = getLocation(location)
+
+    let v_location: number = position.v_location
+    let h_location: number = position.h_location
+
+    let value = undefined
+
+    if (type == Type.CONSTANT) {
+        value = Number(lexim)
+        lexim = null
+    } else {
+        value = null
+    }
+
+    return {
+        'type':         type,
+        'name':         name,
+        'lexim':        lexim,
+        'value':        value,
+        'v_location':   v_location,
+        'h_location':   h_location,
+    }
+
 }
 
 /** Symbol to name mapping */
@@ -110,6 +154,7 @@ function getKey(map: SymbolMap, term: string): string {
 
 import fs = require('fs')
 import colors = require('colors/safe')
+import { getMaxListeners } from 'cluster';
 
 let debugFlag
 
@@ -139,6 +184,27 @@ export function parseFile(filePath, debug: boolean = false) {
     }
 
     return tokens
+}
+
+/**
+ * Returns line number
+ * @param position 
+ */
+function getLocation(position: number): Position {
+    let lines: number = 1
+    let chars: number = 1
+    let iterator: number = 0
+
+    while (iterator < position) {
+        if (getCharacter(iterator) == WHITESPACE.NEWLINE) {
+            chars = 1
+            lines++
+        }
+        chars++
+        iterator++
+    }
+
+    return { 'h_location': chars, 'v_location': lines }
 }
 
 
@@ -182,7 +248,7 @@ function parseCharacter(): Token {
     /* Parse punctuation */
     let tempKey = getKey(PUNCTUATION, getCurrentCharacter())
     if (tempKey != null) {
-        token = { 'type': Type.PUNCTUATION, 'name': tempKey, 'lexim': PUNCTUATION[tempKey], 'value': null, 'location': getCurrentCharacterIndex() }
+        token = createToken(Type.PUNCTUATION, tempKey, PUNCTUATION[tempKey])
         nextCharacter()
     }
 
@@ -191,7 +257,9 @@ function parseCharacter(): Token {
         token = parseNextWord()
     }
 
-    log(token)
+    if (debugFlag) {
+        log(token)
+    }
 
     return token
 
@@ -221,22 +289,26 @@ function parseNextWord(): Token {
         tempCharacter = getCharacter(++tempIndex)
     }
 
+    setCurrentCharacterIndex(--tempIndex)
+
     let key = getKey(RESERVED, word)
 
     /* Reserved word */
     if (key != null) {   
-        token = { 'type': Type.RESERVED, 'name': key, 'lexim': word, 'value': null, 'location': getCurrentCharacterIndex() }
-    }
-    /* Constant */
-    else if (!isNaN(Number(word))) {
-        token = { 'type': Type.CONSTANT, 'name': word, 'lexim': word, 'value': Number(word), 'location': getCurrentCharacterIndex() }    
-    }
-    /* Identifier */
-    else {
-        token = { 'type': Type.IDENTIFIER, 'name': word, 'lexim': word, 'value': null, 'location': getCurrentCharacterIndex() }
+        token = createToken(Type.RESERVED, key, word)
     }
 
-    setCurrentCharacterIndex(tempIndex)
+    /* Constant */
+    else if (!isNaN(Number(word))) {
+        token = createToken(Type.CONSTANT, word, word)
+    }
+
+    /* Identifier */
+    else {
+        token = createToken(Type.IDENTIFIER, word, word)
+    }
+
+    nextCharacter()
 
     return token
 
@@ -285,39 +357,36 @@ function skipUntil(target: string) {
 
 /** Debug print function */ 
 function log(token: Token) {
-    if (!debugFlag) {
-        return
+
+    let nameColor
+
+    switch (token.type) {
+        case Type.CONSTANT:
+            nameColor = colors.green
+            break;
+        case Type.IDENTIFIER:
+            nameColor = colors.cyan
+            break;
+        case Type.PUNCTUATION:
+            nameColor = colors.white
+            break;
+        case Type.RESERVED:
+            nameColor = colors.blue
+            break;
+        case Type.WHITESPACE:
+
+        default:
+            nameColor = colors.grey
+            break;
     }
 
     console.log(
-        colors.yellow(`[${Type_abbr[token.type]}] `) +
-        colors.cyan(`${token.name}\t`) +
+        `\t` +
+        nameColor(`${token.name}\t`) +
         `at ` +
-        colors.yellow(`${token.location}`) +
-        `\t(line ` +
-        colors.yellow(`${getLine(token.location)}`) +
-        `)`
+        colors.yellow(`${token.v_location}`) +
+        `:` +
+        colors.yellow(`${token.h_location}`)
     )
-
-}
-
-//TODO: put into class
-/**
- * Returns line number
- * @param position 
- */
-function getLine(position: number) {
-
-    let lines: number = 1
-    let iterator: number = 0
-
-    while (iterator < position) {
-        if (getCharacter(iterator) == WHITESPACE.NEWLINE) {
-            lines++
-        }
-        iterator++
-    }
-
-    return lines
 
 }
