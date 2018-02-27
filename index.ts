@@ -1,15 +1,11 @@
 import fs = require('fs')
-import lex = require('./src/lexical-analyser')
 import colors = require('colors/safe')
 
-let filePath = undefined
-
-console.log()
+import lex = require('./src/lexical-analyser')
+import parser = require('./src/parser')
 
 /* <command> <app> <target file> */
-if (process.argv.length > 1) {
-    filePath = process.argv[2]
-}
+let filePath = (process.argv.length > 1) ? process.argv[2] : null
 
 try {
 
@@ -23,17 +19,21 @@ try {
 
     /* Parse tokens */
     logInfo('Running parser')
-
+    let tac = parser.parseTokens(tokens)
 
     /* Compile */
     logInfo('Running compiler')
     
 
 } catch (e) {
+
     /* Incorrect usage */
     console.log("Usage: ts-node index.js <file>")
     logError(e)
+
 }
+
+
 
 function logInfo(message: string) {
     console.log(colors.blue('[INFO] ') + message)
@@ -42,5 +42,3 @@ function logInfo(message: string) {
 function logError(message: string) {
     console.log(colors.red(message))
 }
-
-console.log()
