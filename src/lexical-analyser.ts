@@ -1,17 +1,37 @@
-/* 
- * Tokens 
- */
-
-class Token {
-    name
-    lexim
-    value
+/** Lexim types */
+enum Type {
+    'WHITESPACE',
+    'PUNCTUATION',
+    'IDENTIFIER',
+    'CONSTANT',
+    'RESERVED'
 }
 
+/** Abbereviated lexim types */
+enum Type_abbr {
+    'WHITE',
+    'PUNCT',
+    'IDENT',
+    'CONST',
+    'RESER'
+}
+
+
+/** Token class, value and lexim optional */
+class Token {
+    type: Type
+    name: string
+    lexim?: string
+    value?: number
+    location: number
+}
+
+/** Symbol to name mapping */
 interface SymbolMap {
     [name: string]: string
 }
 
+/** WHITE - Whitespace */
 const WHITESPACE: SymbolMap = {
     'SPACE':        ' ',
     'RETURN':       '\r',
@@ -23,6 +43,7 @@ const WHITESPACE: SymbolMap = {
     'EOF':          '\0'
 }
 
+/** PUNCT - Punctuation */
 const PUNCTUATION: SymbolMap = {
     'COMMA':                    ',',
     'COLON':                    ':',
@@ -31,21 +52,35 @@ const PUNCTUATION: SymbolMap = {
     'SINGLE_QUOTE':             '\'',
     'DOUBLE_QUOTE':             '.',
     'BACKSLASH':                '\\',
-    'FORWARDSLASH':             '/',
+    'FWDSLASH':             '/',
     'ASTERISK':                 '*',
     'EXCLAMATION':              '!',
     'AMPERSAND':                '&',
     'EQUALS':                   '=',
     'PLUS':                     '+',
     'MINUS':                    '-',  
-    'OPEN_PARENTHESIS':         '(',
-    'CLOSE_PARENTHESIS':        ')',
-    'OPEN_CURLY_BRACKET':       '{',
-    'CLOSE_CURLY_BRACKET':      '}',
-    'OPEN_ANGLE_BRACKET':       '<',
-    'CLOSE_ANGLE_BRACKET':      '>',
-    'OPEN_SQUARE_BRACKET':      '[',
-    'CLOSE_SQUARE_BRACKET':     ']'
+    'O_PAR':         '(',
+    'C_PAR':        ')',
+    'O_CUR_BR':       '{',
+    'C_CUR_BR':      '}',
+    'O_ANG_BR':       '<',
+    'C_ANG_BR':      '>',
+    'O_SQR_BR':      '[',
+    'C_SQR_BR':     ']'
+}
+
+/** IDENT - Identifier */
+const IDENTIFIER = 'IDENTIFIER'
+
+/** CONST - Constant */
+const CONSTANT = 'CONSTANT'
+
+/** RESER - Reserved */
+const RESERVED: SymbolMap = {
+    'LET':                  'let',
+    'NUMBER':               'number',
+    'CONSOLE':              'console',
+    'LOG':                  'log'
 }
 
 /**
@@ -53,13 +88,8 @@ const PUNCTUATION: SymbolMap = {
  * @param map Map to search.
  * @param term Term to look for.
  */
-function searchMap(map: SymbolMap, term: string): boolean {
-    for (let key in map) {
-        if (map[key] == term) {
-            return true;
-        }
-    }
-    return false;
+function isMapped(map: SymbolMap, term: string): boolean {
+    return getKey(map, term) != null
 }
 
 /**
@@ -70,24 +100,10 @@ function searchMap(map: SymbolMap, term: string): boolean {
 function getKey(map: SymbolMap, term: string): string {
     for (let key in map) {
         if (map[key] == term) {
-            return key;
+            return key
         }
     }
-    return null;
-}
-
-enum TOKEN_ID {
-
-    /* Keywords */
-    LET = 'let',
-
-    /* Variable objects */
-    NUMBER = 'number',
-
-    /* Reserved statements */
-    PRINT = 'console.log',
-
-    UNKNOWN = -1
+    return null
 }
 
 
@@ -118,40 +134,37 @@ export function parseFile(filePath, debug: boolean = false) {
         tokens.push(parseCharacter())
         /* EOF */
         if (currentCharacterIndex >= content.length) {
-            break;
+            break
         }
     }
 
     return tokens
 }
 
-/**
- * Increments current character index and parses character.
- */
+
+
+/** Increments current character index and parses character. */
 function parseNextCharacter(): Token {
     nextCharacter()
     return parseCharacter()
 }
 
-/**
- * Parses character and returns its lexical token.
+/** 
+ * Parses character and returns its lexical token. 
+ * 
+ * @returns
  */
 function parseCharacter(): Token {
-    /* Skip whitespace */
-    let tempKey = getKey(WHITESPACE, getCurrentCharacter())
-    if (tempKey != null) {
-        logWhitespace(tempKey)
-        return parseNextCharacter()
-    }
 
     /* Skip line comments */
-    if (getCurrentCharacter() == PUNCTUATION['FORWARDSLASH'] && peekNextCharacter() == PUNCTUATION['FORWARDSLASH']) {
+    if (getCurrentCharacter() == PUNCTUATION['FWDSLASH'] && peekNextCharacter() == PUNCTUATION['FWDSLASH']) {
         skipUntil(WHITESPACE['NEWLINE'])
         return parseNextCharacter()
     }
+
     /* Skip block comments */
-    if (getCurrentCharacter() == PUNCTUATION['FORWARDSLASH'] && peekNextCharacter() == PUNCTUATION['ASTERISK']) {
-        while (peekNextCharacter() != PUNCTUATION['FORWARDSLASH']) {
+    if (getCurrentCharacter() == PUNCTUATION['FWDSLASH'] && peekNextCharacter() == PUNCTUATION['ASTERISK']) {
+        while (peekNextCharacter() != PUNCTUATION['FWDSLASH']) {
             nextCharacter()
             skipUntil(PUNCTUATION['ASTERISK'])
         }
@@ -159,100 +172,103 @@ function parseCharacter(): Token {
         return parseNextCharacter()
     }
 
+    /* Skip whitespace */
+    if (isMapped(WHITESPACE, getCurrentCharacter())) {
+        return parseNextCharacter()
+    }
+
+    let token: Token
+
     /* Parse punctuation */
-    tempKey = getKey(PUNCTUATION, getCurrentCharacter())
+    let tempKey = getKey(PUNCTUATION, getCurrentCharacter())
     if (tempKey != null) {
-        logPunctuation(tempKey)
+        token = { 'type': Type.PUNCTUATION, 'name': tempKey, 'lexim': PUNCTUATION[tempKey], 'value': null, 'location': getCurrentCharacterIndex() }
         nextCharacter()
-        return { 'name': tempKey, 'lexim': PUNCTUATION[tempKey], 'value': undefined }
     }
 
-    logCharacter()
-    nextCharacter()
-
-    return { 'name': undefined, 'lexim': getCurrentCharacter(), 'value': undefined }
-}
-
-
-
-/* 
- * Debug print functions 
- */ 
-
-/**
- * Logs current character as whitespace.
- * @param key Key to log as.
- */
-function logWhitespace(key) {
-    if (!debugFlag) {
-        return
+    /* Parse words */
+    else {
+        token = parseNextWord()
     }
-    console.log(colors.yellow('[DEBUG] ') + colors.blue(key) + ' at ' + colors.yellow(getCurrentCharacterIndex()))
-}
 
-/**
- * Logs current character as punctuation.
- * @param key Key to log as.
- */
-function logPunctuation(key) {
-    if (!debugFlag) { 
-        return
-    }
-    console.log(colors.yellow('[DEBUG] ') + colors.cyan(key) + ' at ' + colors.yellow(getCurrentCharacterIndex()))
-}
+    log(token)
 
-/**
- * Logs current character information to console.
- * Only works if debug flag is set to 1.
- */
-function logCharacter() {
-    if (!debugFlag) {
-        return
-    }
-    console.log(
-        colors.yellow('[DEBUG] ') 
-        + 'Character at ' 
-        + colors.yellow(getCurrentCharacterIndex()) 
-        + ': ' 
-        + colors.green(getCurrentCharacter())
-        + ' ['
-        + colors.magenta(getCurrentCharacter().charCodeAt(0))
-        + ']'
-    )
-}
+    return token
 
+}
 
 
 /* 
  * Helper functions 
  */
 
-/**
- * Increments current index.
+/** 
+ * 
+ * 
+ * @returns
  */
+function parseNextWord(): Token {
+    let word: string = ''
+    let token: Token
+
+    /* Find next break */
+    let tempIndex: number = getCurrentCharacterIndex()
+    let tempCharacter: string = getCharacter(tempIndex)
+
+    while(!isMapped(WHITESPACE, tempCharacter) && !isMapped(PUNCTUATION, tempCharacter)) {
+        word += tempCharacter
+        //todo: check EOF
+        tempCharacter = getCharacter(++tempIndex)
+    }
+
+    let key = getKey(RESERVED, word)
+
+    /* Reserved word */
+    if (key != null) {   
+        token = { 'type': Type.RESERVED, 'name': key, 'lexim': word, 'value': null, 'location': getCurrentCharacterIndex() }
+    }
+    /* Constant */
+    else if (!isNaN(Number(word))) {
+        token = { 'type': Type.CONSTANT, 'name': word, 'lexim': word, 'value': Number(word), 'location': getCurrentCharacterIndex() }    
+    }
+    /* Identifier */
+    else {
+        token = { 'type': Type.IDENTIFIER, 'name': word, 'lexim': word, 'value': null, 'location': getCurrentCharacterIndex() }
+    }
+
+    setCurrentCharacterIndex(tempIndex)
+
+    return token
+
+}
+
+/** Increments current index. */
 function nextCharacter() {
     currentCharacterIndex++
 }
 
-/**
- * Returns current index.
- */
+/** Returns current index. */
 function getCurrentCharacterIndex(): number {
     return currentCharacterIndex
 }
 
-/**
- * Returns current character in file.
- */
-function getCurrentCharacter(): string {
-    return content[currentCharacterIndex]
+function setCurrentCharacterIndex(index: number) {
+    currentCharacterIndex = index
 }
 
-/**
- * Returns next character in file.
- */
+/** Returns current character in file. */
+function getCharacter(characterIndex: number): string {
+    return content[characterIndex]
+}
+
+/** Returns current character in file. */
+function getCurrentCharacter(): string {
+    return getCharacter(currentCharacterIndex)
+}
+
+/** Returns next character in file. */
 function peekNextCharacter(): string {
-    return content[currentCharacterIndex + 1]
+    return getCharacter(currentCharacterIndex + 1)
 }
 
 /**
@@ -263,4 +279,45 @@ function skipUntil(target: string) {
     while (getCurrentCharacter() != target) {
         nextCharacter()
     }
+}
+
+
+
+/** Debug print function */ 
+function log(token: Token) {
+    if (!debugFlag) {
+        return
+    }
+
+    console.log(
+        colors.yellow(`[${Type_abbr[token.type]}] `) +
+        colors.cyan(`${token.name}\t`) +
+        `at ` +
+        colors.yellow(`${token.location}`) +
+        `\t(line ` +
+        colors.yellow(`${getLine(token.location)}`) +
+        `)`
+    )
+
+}
+
+//TODO: put into class
+/**
+ * Returns line number
+ * @param position 
+ */
+function getLine(position: number) {
+
+    let lines: number = 1
+    let iterator: number = 0
+
+    while (iterator < position) {
+        if (getCharacter(iterator) == WHITESPACE.NEWLINE) {
+            lines++
+        }
+        iterator++
+    }
+
+    return lines
+
 }
