@@ -48,10 +48,15 @@ const PUNCTUATION: SymbolMap = {
     'CLOSE_SQUARE_BRACKET':     ']'
 }
 
+const IDENTIFIER = 'IDENTIFIER'
+
+const CONSTANT = 'CONSTANT'
+
 const RESERVED: SymbolMap = {
     'LET':                  'let',
     'NUMBER':               'number',
-    'PRINT':                'console.log'
+    'CONSOLE':              'console',
+    'LOG':                  'log'
 }
 
 /**
@@ -59,7 +64,7 @@ const RESERVED: SymbolMap = {
  * @param map Map to search.
  * @param term Term to look for.
  */
-function searchMap(map: SymbolMap, term: string): boolean {
+function isMapped(map: SymbolMap, term: string): boolean {
     return getKey(map, term) != null
 }
 
@@ -114,17 +119,13 @@ export function parseFile(filePath, debug: boolean = false) {
 
 
 
-/**
- * Increments current character index and parses character.
- */
+/** Increments current character index and parses character. */
 function parseNextCharacter(): Token {
     nextCharacter()
     return parseCharacter()
 }
 
-/**
- * Parses character and returns its lexical token.
- */
+/** Parses character and returns its lexical token. */
 function parseCharacter(): Token {
     /* Skip whitespace */
     let tempKey = getKey(WHITESPACE, getCurrentCharacter())
@@ -132,7 +133,6 @@ function parseCharacter(): Token {
         logWhitespace(tempKey)
         return parseNextCharacter()
     }
-
     /* Skip line comments */
     if (getCurrentCharacter() == PUNCTUATION['FORWARDSLASH'] && peekNextCharacter() == PUNCTUATION['FORWARDSLASH']) {
         skipUntil(WHITESPACE['NEWLINE'])
@@ -156,44 +156,80 @@ function parseCharacter(): Token {
         return { 'name': tempKey, 'lexim': PUNCTUATION[tempKey], 'value': undefined }
     }
 
-    logCharacter()
-    nextCharacter()
-
-    return { 'name': undefined, 'lexim': getCurrentCharacter(), 'value': undefined }
+    let word: Token = parseNextWord()
+    logWord(word.name, word.lexim)
+    return word
 }
-
 
 
 /* 
  * Helper functions 
  */
 
-/**
- * Increments current index.
+/** 
+ * 
+ * @returns
  */
+function parseNextWord(): Token {
+    let word: string = ''
+
+    /* Find next break */
+    let tempIndex: number = getCurrentCharacterIndex()
+    let tempCharacter: string = getCharacter(tempIndex)
+
+    //console.log("checking if " + tempCharacter + " at " + tempIndex + " is whitespace or punctuation")
+
+    while(!isMapped(WHITESPACE, tempCharacter) && !isMapped(PUNCTUATION, tempCharacter)) {
+        word += tempCharacter
+        //todo: check EOF
+        tempCharacter = getCharacter(++tempIndex)
+    }
+
+    let key = getKey(RESERVED, word)
+    setCurrentCharacterIndex(tempIndex)
+
+    /* Reserved word */
+    if (key != null) {   
+        return { 'name': key, 'lexim': word, 'value': undefined }
+    }
+    /* Constant */
+    else if (!isNaN(Number(word))) {
+        return { 'name': CONSTANT, 'lexim': word, 'value': Number(word) }     
+    }
+    /* Identifier */
+    else {
+        return { 'name': IDENTIFIER, 'lexim': word, 'value': undefined }     
+    }
+
+}
+
+/** Increments current index. */
 function nextCharacter() {
     currentCharacterIndex++
 }
 
-/**
- * Returns current index.
- */
+/** Returns current index. */
 function getCurrentCharacterIndex(): number {
     return currentCharacterIndex
 }
 
-/**
- * Returns current character in file.
- */
-function getCurrentCharacter(): string {
-    return content[currentCharacterIndex]
+function setCurrentCharacterIndex(index: number) {
+    currentCharacterIndex = index
 }
 
-/**
- * Returns next character in file.
- */
+/** Returns current character in file. */
+function getCharacter(characterIndex: number): string {
+    return content[characterIndex]
+}
+
+/** Returns current character in file. */
+function getCurrentCharacter(): string {
+    return getCharacter(currentCharacterIndex)
+}
+
+/** Returns next character in file. */
 function peekNextCharacter(): string {
-    return content[currentCharacterIndex + 1]
+    return getCharacter(currentCharacterIndex + 1)
 }
 
 /**
@@ -232,6 +268,17 @@ function logPunctuation(key) {
         return
     }
     console.log(colors.yellow('[DEBUG] ') + colors.cyan(key) + ' at ' + colors.yellow(getCurrentCharacterIndex()))
+}
+
+/**
+ * Logs current character as punctuation.
+ * @param key Key to log as.
+ */
+function logWord(key, lexim) {
+    if (!debugFlag) { 
+        return
+    }
+    console.log(colors.yellow('[DEBUG] ') + colors.green(key) + ' at ' + colors.yellow(getCurrentCharacterIndex()) + ": " + colors.grey(lexim))
 }
 
 /**
