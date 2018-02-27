@@ -154,7 +154,7 @@ function getKey(map: SymbolMap, term: string): string {
 
 import fs = require('fs')
 import colors = require('colors/safe')
-import { getMaxListeners } from 'cluster';
+import { getMaxListeners } from 'cluster'
 
 let debugFlag
 
@@ -363,21 +363,21 @@ function log(token: Token) {
     switch (token.type) {
         case Type.CONSTANT:
             nameColor = colors.green
-            break;
+            break
         case Type.IDENTIFIER:
             nameColor = colors.cyan
-            break;
+            break
         case Type.PUNCTUATION:
             nameColor = colors.white
-            break;
+            break
         case Type.RESERVED:
             nameColor = colors.blue
-            break;
+            break
         case Type.WHITESPACE:
 
         default:
             nameColor = colors.grey
-            break;
+            break
     }
 
     console.log(

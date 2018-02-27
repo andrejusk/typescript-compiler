@@ -2,7 +2,7 @@ import fs = require('fs')
 import lex = require('./src/lexical-analyser')
 import colors = require('colors/safe')
 
-let filePath = undefined;
+let filePath = undefined
 
 console.log()
 
