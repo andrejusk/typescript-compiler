@@ -4,21 +4,33 @@ import colors = require('colors/safe')
 
 let filePath = undefined;
 
+console.log()
+
 /* <command> <app> <target file> */
 if (process.argv.length > 1) {
     filePath = process.argv[2]
 }
 
 try {
-    fs.readFileSync(filePath, 'utf8')
-    logInfo('Opened ' + filePath)
 
+    /* Open file */
+    fs.readFileSync(filePath, 'utf8')
+    logInfo(`Opened ${filePath}`)
+
+    /* Run lex */
     logInfo('Running lexical analyser')
     let tokens = lex.parseFile(filePath, true)
 
+    /* Parse tokens */
     logInfo('Running parser')
+
+
+    /* Compile */
+    logInfo('Running compiler')
+    
+
 } catch (e) {
-    /* If incorrect */
+    /* Incorrect usage */
     console.log("Usage: ts-node index.js <file>")
     logError(e)
 }
@@ -30,3 +42,5 @@ function logInfo(message: string) {
 function logError(message: string) {
     console.log(colors.red(message))
 }
+
+console.log()
