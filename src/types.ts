@@ -1,4 +1,34 @@
 
+declare global {
+    /** Holds vertical and horizontal character values */
+    class SourcePos {
+        h: number
+        v: number
+    }
+
+    /** Token class, value and lexeme optional */
+    class Token {
+        type: Type
+        name: string
+        lexeme: string
+        value: number
+        location: SourcePos
+    }
+
+    /** Symbol to name mapping */
+    interface SymbolMap {
+        [name: string]: string
+    }
+    
+    /** Form of Three Address Code (TAC) */
+    class Procedure {
+        action: string
+        argument1: string
+        argument2: string
+        result: string
+    }
+}
+
 /** Lexim types */
 export enum Type {
     'WHITESPACE',

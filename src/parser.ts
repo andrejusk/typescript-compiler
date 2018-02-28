@@ -1,17 +1,6 @@
 
 import { log } from './debug-print'
 
-declare global {
-
-    /** Form of Three Address Code (TAC) */
-    class Procedure {
-        action: string
-        argument1: string
-        argument2: string
-        result: string
-    }
-}
-
 let debugFlag: boolean
 
 let tokens: Token[]
