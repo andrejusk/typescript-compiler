@@ -2,114 +2,6 @@
 import { Type, WHITESPACE, PUNCTUATION, RESERVED } from './types'
 import { log } from './debug-print'
 
-declare global {
-
-    /** Holds vertical and horizontal character values */
-    class SourcePos {
-        h: number
-        v: number
-    }
-
-    /** Token class, value and lexeme optional */
-    class Token {
-        type: Type
-        name: string
-        lexeme: string
-        value: number
-        location: SourcePos
-    }
-
-    /** Symbol to name mapping */
-    interface SymbolMap {
-        [name: string]: string
-    }
-}
-
-/**
- * Creates and returns Token
- * @param type Type of Token
- * @param name Name of Token
- * @param lexeme Lexim the Token was parsed from
- * @param location SourcePos in source file
- */
-function createToken(type: Type, name: string, lexeme: string): Token {
-    let location: number = getCurrentCharacterIndex()
-
-    let position: SourcePos = getSourcePos(location)
-
-    let value: number = undefined
-
-    if (type == Type.CONSTANT) {
-        value = Number(lexeme)
-        lexeme = null
-    } else {
-        value = null
-    }
-
-    return {
-        'type':         type,
-        'name':         name,
-        'lexeme':       lexeme,
-        'value':        value,
-        'location':     position,
-    }
-}
-
-
-
-
-/**
- * Returns line number
- * @param position 
- */
-function getSourcePos(position: number): SourcePos {
-    let lines: number = 1
-    let chars: number = 1
-    let iterator: number = 0
-
-    while (iterator < position) {
-        if (getCharacter(iterator) == WHITESPACE.NEWLINE) {
-            chars = 1
-            lines++
-        }
-        chars++
-        iterator++
-    }
-
-    return { 'h': chars, 'v': lines }
-}
-
-
-
-
-
-/**
- * Returns whether map contains term.
- * @param map Map to search.
- * @param term Term to look for.
- */
-function isMapped(map: SymbolMap, term: string): boolean {
-    return getKey(map, term) != null
-}
-
-/**
- * Returns term's key in map. Null if doesn't exist.
- * @param map Map to search.
- * @param term Term to look for.
- */
-function getKey(map: SymbolMap, term: string): string {
-    for (let key in map) {
-        if (map[key] == term) {
-            return key
-        }
-    }
-    return null
-}
-
-
-
-
-
 import fs = require('fs')
 import { getMaxListeners } from 'cluster'
 
@@ -251,11 +143,85 @@ function parseNextWord(): Token {
 
 
 
-
-
-/* 
- * Helper functions 
+/**
+ * Creates and returns Token
+ * @param type Type of Token
+ * @param name Name of Token
+ * @param lexeme Lexim the Token was parsed from
+ * @param location SourcePos in source file
  */
+function createToken(type: Type, name: string, lexeme: string): Token {
+    let location: number = getCurrentCharacterIndex()
+
+    let position: SourcePos = getSourcePos(location)
+
+    let value: number = undefined
+
+    if (type == Type.CONSTANT) {
+        value = Number(lexeme)
+        lexeme = null
+    } else {
+        value = null
+    }
+
+    return {
+        'type':         type,
+        'name':         name,
+        'lexeme':       lexeme,
+        'value':        value,
+        'location':     position,
+    }
+}
+
+/**
+ * Returns line number
+ * @param position 
+ */
+function getSourcePos(position: number): SourcePos {
+    let lines: number = 1
+    let chars: number = 1
+    let iterator: number = 0
+
+    while (iterator < position) {
+        if (getCharacter(iterator) == WHITESPACE.NEWLINE) {
+            chars = 1
+            lines++
+        }
+        chars++
+        iterator++
+    }
+
+    return { 'h': chars, 'v': lines }
+}
+
+
+
+/**
+ * Returns whether map contains term.
+ * @param map Map to search.
+ * @param term Term to look for.
+ */
+function isMapped(map: SymbolMap, term: string): boolean {
+    return getKey(map, term) != null
+}
+
+/**
+ * Returns term's key in map. Null if doesn't exist.
+ * @param map Map to search.
+ * @param term Term to look for.
+ */
+function getKey(map: SymbolMap, term: string): string {
+    for (let key in map) {
+        if (map[key] == term) {
+            return key
+        }
+    }
+    return null
+}
+
+
+
+
 
 /** Returns current index. */
 function getCurrentCharacterIndex(): number {

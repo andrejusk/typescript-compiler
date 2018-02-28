@@ -2,8 +2,6 @@
 import { Type, TypeS } from './types'
 import colors = require('colors/safe')
 
-
-
 /** Debug print function */ 
 export function log(Token: Token): void {
     let nameColor: colors
