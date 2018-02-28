@@ -1,6 +1,8 @@
+
 import fs = require('fs')
 import colors = require('colors/safe')
 
+import { logError, logInfo } from './src/debug-print'
 import lex = require('./src/lexical-analyser')
 import parser = require('./src/parser')
 
@@ -14,7 +16,7 @@ try {
 
     /* Run lex */
     logInfo('Running lexical analyser')
-    let tokens: Token[] = lex.parseFile(filePath, true)
+    let tokens: Token[] = lex.parseFile(filePath, false)
 
     /* Parse tokens */
     logInfo('Running parser')
@@ -23,21 +25,8 @@ try {
     /* Compile */
     logInfo('Running compiler')
     console.log()
-
 } catch (e) {
-
     /* Incorrect usage */
-    console.log("Usage: ts-node index.js <file>")
+    logInfo("Usage: ts-node index.js <file>")
     logError((<Error>e).stack)
-
-}
-
-
-
-function logInfo(message: string) {
-    console.log(colors.blue('[INFO] ') + message)
-}
-
-function logError(message: string) {
-    console.log(colors.red(message))
 }

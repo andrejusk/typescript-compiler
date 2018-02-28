@@ -1,3 +1,4 @@
+
 /** Lexim types */
 export enum Type {
     'WHITESPACE',
