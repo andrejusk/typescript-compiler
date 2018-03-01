@@ -77,9 +77,6 @@ function parse(): SyntaxTree {
         return parseExpression()
     }
     
-    logToken(getCurrentToken())
-    currentIndex++
-    return null
 }
 
 /** 
@@ -198,24 +195,12 @@ function consume(number: number) {
     }
 }
 
-function getNextIndex(): number {
-    return currentIndex + 1
-}
-
-function getCurrentIndex(): number {
-    return currentIndex
-}
-
 
 
 function getToken(index: number): Token {
     return tokens[index]
 }
 
-function getNextToken(): Token {
-    return getToken(getNextIndex())
-}
-
 function getCurrentToken(): Token {
-    return getToken(getCurrentIndex())
+    return getToken(currentIndex)
 }
