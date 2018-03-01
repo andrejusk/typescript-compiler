@@ -54,6 +54,20 @@ export function logProcedure(procedure: Procedure): void {
     )
 }
 
+/** Debug print function */ 
+export function logTree(node: SyntaxTree): void {
+    if (node == null) {
+        return
+    }
+
+    console.log(
+        colors.yellow(`  >>\t`) +
+        colors.cyan(`${node.content.name}\t`) +
+        colors.cyan(`${node.argument1.content.name}\t & `) +
+        colors.cyan(`${node.argument2.content.name}\t`)
+    )
+}
+
 
 
 export function logInfo(message: string) {

@@ -26,6 +26,12 @@ declare global {
         argument2: string
         result: string
     }
+
+    class SyntaxTree {
+        content: Token
+        argument1?: SyntaxTree
+        argument2?: SyntaxTree 
+    }
 }
 
 /** Lexim types */

@@ -20,7 +20,7 @@ try {
 
     /* Parse tokens */
     logInfo('Running parser')
-    let tac: Procedure[] = parser.parseTokens(tokens, true)
+    let tac: SyntaxTree = parser.parseTokens(tokens, true)
 
     /* Compile */
     logInfo('Running compiler')
