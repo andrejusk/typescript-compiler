@@ -92,14 +92,14 @@ function parse(): SyntaxTree {
  * 0   1 2 3       4 5
  * let a : number (= 10)
  * 
- *       3 type
- * 1 ident    5 (value)
+ *    3 declare/(assign) type
+ * 1 ident             5 (value)
  */
 function parseDeclaration(): SyntaxTree {
 
     /* Sanity check colon */
     if (getToken(currentIndex + 2).lexeme != ":") {
-        throw `Expected : at ${getToken(currentIndex + 1).location.v + 1}:${getToken(currentIndex + 1).location.h + 1}`
+        throw `Expected ':' at ${getToken(currentIndex + 1).location.v + 1}:${getToken(currentIndex + 1).location.h + 1}`
     }
 
     let skipAhead: number
@@ -132,9 +132,29 @@ function parseDeclaration(): SyntaxTree {
 /** 
  * 0      12  345
  * console.log(a)
+ * 
+ *      2 log
+ * 4 ident
  */
 function parsePrint(): SyntaxTree {
-    //TODO: sanity check (punctuation)
+
+    /* Sanity check dot */
+    if (getToken(currentIndex + 1).lexeme != ".") {
+        throw `Expected '.' at ${getToken(currentIndex).location.v + 1}:${getToken(currentIndex).location.h + 1}`
+    }
+    /* Sanity check log function */
+    if (getToken(currentIndex + 2).lexeme != "log") {
+        throw `Expected 'log' at ${getToken(currentIndex + 1).location.v + 1}:${getToken(currentIndex + 1).location.h + 1}`
+    }
+    /* Sanity check parenthesis */
+    if (getToken(currentIndex + 3).lexeme != "(") {
+        throw `Expected '(' at ${getToken(currentIndex + 2).location.v + 1}:${getToken(currentIndex + 2).location.h + 1}`
+    }
+    /* Sanity check parenthesis */
+    if (getToken(currentIndex + 5).lexeme != ")") {
+        throw `Expected ')' at ${getToken(currentIndex + 4).location.v + 1}:${getToken(currentIndex + 4).location.h + 1}`
+    }
+
     let action: Token = getToken(currentIndex + 2)
     let identifier: Token = getToken(currentIndex + 4)
     currentIndex += 6
@@ -142,6 +162,7 @@ function parsePrint(): SyntaxTree {
         content: action,
         argument1: { content: identifier }
     }
+    
 }
 
 
