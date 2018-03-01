@@ -5,26 +5,29 @@ import { logToken } from './debug-print'
 import fs = require('fs')
 import { getMaxListeners } from 'cluster'
 
-let debugFlag: boolean
-
 let content: string[]
 let currentCharacterIndex: number = 0
 
 /**
  * Parses file using lexical analysis.
- * @param filePath File to parse.
+ * @param filePath File to read.
  * @param debug Print debug messages.
  */
-export function parseFile(filePath: string, debug: boolean = false): Token[] {
-    debugFlag = debug
-
+export function readFile(filePath: string, debug: boolean = false): Token[] {
     content = fs.readFileSync(filePath, 'utf8').split('')
 
+    let tempToken: Token = undefined
     let tokens: Token[] = new Array()
     
     while (currentCharacterIndex < content.length) {
         /* Parse character */
-        tokens.push(parse())
+        tempToken = read()
+        tokens.push(tempToken)
+
+        /* Debug print */
+        if (debug) {
+            logToken(tempToken)
+        }
     }
 
     return tokens
@@ -39,12 +42,12 @@ export function parseFile(filePath: string, debug: boolean = false): Token[] {
  * 
  * @returns
  */
-function parse(): Token {
+function read(): Token {
 
     /* Skip line comments */
     if (getCurrentCharacter() == PUNCTUATION['FWDSLASH'] && peekNextCharacter() == PUNCTUATION['FWDSLASH']) {
         skipUntil(WHITESPACE['NEWLINE'])
-        return parseNext()
+        return readNext()
     }
 
     /* Skip block comments */
@@ -54,12 +57,12 @@ function parse(): Token {
             skipUntil(PUNCTUATION['ASTERISK'])
         }
         nextCharacter()
-        return parseNext()
+        return readNext()
     }
 
     /* Skip whitespace */
     if (isMapped(WHITESPACE, getCurrentCharacter())) {
-        return parseNext()
+        return readNext()
     }
 
     let Token: Token
@@ -73,28 +76,24 @@ function parse(): Token {
 
     /* Parse words */
     else {
-        Token = parseNextWord()
-    }
-
-    if (debugFlag) {
-        logToken(Token)
+        Token = readNextWord()
     }
 
     return Token
 
 }
 
-/** Increments current character index and parses character. */
-function parseNext(): Token {
+/** Increments current character index and reads character. */
+function readNext(): Token {
     nextCharacter()
-    return parse()
+    return read()
 }
 
 /** 
  * 
  * @returns
  */
-function parseNextWord(): Token {
+function readNextWord(): Token {
     let word: string = ''
     let token: Token
 
@@ -143,7 +142,7 @@ function parseNextWord(): Token {
  * Creates and returns Token
  * @param type Type of Token
  * @param name Name of Token
- * @param lexeme Lexim the Token was parsed from
+ * @param lexeme Lexim the Token was read from
  * @param location SourcePos in source file
  */
 function createToken(type: Type, name: string, lexeme: string): Token {

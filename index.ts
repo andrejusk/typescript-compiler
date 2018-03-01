@@ -16,7 +16,7 @@ try {
 
     /* Run lex */
     logInfo('Running lexical analyser')
-    let tokens: Token[] = lex.parseFile(filePath, false)
+    let tokens: Token[] = lex.readFile(filePath, false)
 
     /* Parse tokens */
     logInfo('Running parser')
@@ -28,5 +28,6 @@ try {
 } catch (e) {
     /* Incorrect usage */
     logInfo("Usage: ts-node index.js <file>")
-    logError((<Error>e).stack)
+    logError(e)
+    logError(`Stack: ${(<Error>e).stack}`)
 }
