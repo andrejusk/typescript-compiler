@@ -54,6 +54,31 @@ export function logProcedure(procedure: Procedure): void {
     )
 }
 
+/** Debug print function */ 
+export function logTree(node: SyntaxTree, indent: number = 0, side: string = ">"): void {
+    /* Indent by the given amount */
+    let index: number = 0
+    let prefix: string = ""
+    while (index < indent) {
+        prefix += `\t`
+        index++
+    }
+    prefix += colors.yellow(`${side}> `)
+
+    /* Don't print null nodes */
+    if (node == null) {
+        //console.log(prefix + colors.grey("null"))
+        return
+    }
+
+    /* Infix traversal */
+    logTree(node.argument1, indent + 1, '/')
+    console.log(
+        prefix + colors.cyan(`${node.content.name}\t`)
+    )
+    logTree(node.argument2, indent + 1, '\\')
+}
+
 
 
 export function logInfo(message: string) {

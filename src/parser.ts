@@ -1,6 +1,7 @@
 
-import { logToken, logProcedure } from './debug-print'
-import { RESERVED, PUNCTUATION } from './types';
+import { logToken, logTree } from './debug-print'
+import { Type, RESERVED, PUNCTUATION } from './types';
+import { create } from 'domain';
 
 let debugFlag: boolean
 
@@ -17,30 +18,53 @@ export function parseTokens(lex: Token[], debug: boolean) {
 
     tokens = lex
 
-    let procedure: Procedure
-    let tac: Procedure[] = new Array()
+    let tempNode: SyntaxTree
+    let root: SyntaxTree = undefined
 
-    while (true) {
+    while (currentIndex < tokens.length) {
         /* Parse token */
-        let procedure = parse()
-        tac.push(procedure)
-        if (debugFlag) {
-            logProcedure(procedure)
+        tempNode = parse()
+
+        if (root == undefined) {
+            /* Create empty root */
+            root = createEmptyTree()       
+        } else if (root.argument2 == undefined) {
+            /* Fill root */
+            root.argument2 = tempNode
+            /* Copy root */
+            tempNode = root
+            /* Create empty root */
+            root = createEmptyTree()
         }
-        /* End of tokens */
-        if (currentIndex >= tokens.length) {
-            break;
-        }
+
+        /* Add child node */
+        root.argument1 = tempNode
     }
 
-    return tac
+    /* Debug print */
+    if (debugFlag) {
+        logTree(root)
+    }
+
+    return root
+}
+
+function createEmptyTree(): SyntaxTree {
+    return { 
+        content: { 
+            type: Type.SEQUENCE, 
+            name: 'SEQUENCE', 
+            lexeme: null, 
+            location: null 
+        }, 
+        argument1: undefined,
+        argument2: undefined
+    }
 }
 
 
 
-
-
-function parse(): Procedure {
+function parse(): SyntaxTree {
 
     /* Variable declaration */
     if (getCurrentToken().lexeme == RESERVED['LET']) {
@@ -66,18 +90,18 @@ function parse(): Procedure {
  * 0   1 2 3       4 5
  * let a : number (= 10)
  */
-function parseDeclaration(): Procedure {
+function parseDeclaration(): SyntaxTree {
     let skipAhead: number
 
     //TODO: sanity check punctuation
 
     let identifier: Token = getToken(currentIndex + 1)
     let type: Token = getToken(currentIndex + 3)
-    let value: string
+    let value: SyntaxTree
 
     /* Assign operator */
     if (getToken(currentIndex + 4).lexeme == PUNCTUATION['EQUALS']) {
-        value = getToken(currentIndex + 5).lexeme
+        value = { content: getToken(currentIndex + 5) }
         skipAhead = 6
     } else {
         value = null
@@ -87,10 +111,9 @@ function parseDeclaration(): Procedure {
     currentIndex += skipAhead
 
     return {
-        action: 'DECLARE',
-        argument1: type.name,
-        argument2: value,
-        result: identifier.name
+        content: type,
+        argument1: { content: identifier },
+        argument2: value
     }
 }
 
@@ -98,15 +121,14 @@ function parseDeclaration(): Procedure {
  * 0      12  345
  * console.log(a)
  */
-function parsePrint(): Procedure {
+function parsePrint(): SyntaxTree {
     //TODO: sanity check (punctuation)
+    let action: Token = getToken(currentIndex + 2)
     let identifier: Token = getToken(currentIndex + 4)
     currentIndex += 6
     return {
-        action: 'PRINT',
-        argument1: identifier.name,
-        argument2: null,
-        result: null
+        content: action,
+        argument1: { content: identifier }
     }
 }
 
@@ -115,33 +137,19 @@ function parsePrint(): Procedure {
  * 0 1 2 3 4
  * a = b + c
 */
-function parseExpression(): Procedure {
-
-    let action: string
+function parseExpression(): SyntaxTree {
 
     let result: Token = getToken(currentIndex)
     let address1: Token = getToken(currentIndex + 2)
     let operation: Token = getToken(currentIndex + 3)
     let address2: Token = getToken(currentIndex + 4)
 
-    switch (operation.name) {
-        case 'PLUS':
-            action = 'ADD'
-            break
-        case 'MINUS':
-            action = 'SUBTRACT'
-            break
-        default:
-            action = undefined
-    }
-
     currentIndex += 5
 
     return {
-        action: action,
-        argument1: address1.name,
-        argument2: address2.name,
-        result: result.name
+        content: operation,
+        argument1: { content: address1 },
+        argument2: { content: address2 }
     }
 
 }
