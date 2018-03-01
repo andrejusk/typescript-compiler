@@ -28,5 +28,6 @@ try {
 } catch (e) {
     /* Incorrect usage */
     logInfo("Usage: ts-node index.js <file>")
-    logError((<Error>e).stack)
+    logError(e)
+    logError(`Stack: ${(<Error>e).stack}`)
 }

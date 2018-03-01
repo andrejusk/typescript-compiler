@@ -87,13 +87,22 @@ function parse(): SyntaxTree {
 }
 
 /** 
+ * Declaration parser
+ * 
  * 0   1 2 3       4 5
  * let a : number (= 10)
+ * 
+ *       3 type
+ * 1 ident    5 (value)
  */
 function parseDeclaration(): SyntaxTree {
-    let skipAhead: number
 
-    //TODO: sanity check punctuation
+    /* Sanity check colon */
+    if (getToken(currentIndex + 2).lexeme != ":") {
+        throw `Expected : at ${getToken(currentIndex + 1).location.v + 1}:${getToken(currentIndex + 1).location.h + 1}`
+    }
+
+    let skipAhead: number
 
     let identifier: Token = getToken(currentIndex + 1)
     let type: Token = getToken(currentIndex + 3)
@@ -101,9 +110,11 @@ function parseDeclaration(): SyntaxTree {
 
     /* Assign operator */
     if (getToken(currentIndex + 4).lexeme == PUNCTUATION['EQUALS']) {
+        type.name = `ASSIGN ${type.name}`
         value = { content: getToken(currentIndex + 5) }
         skipAhead = 6
     } else {
+        type.name = `DECLARE ${type.name}`
         value = null
         skipAhead = 4
     }
@@ -115,6 +126,7 @@ function parseDeclaration(): SyntaxTree {
         argument1: { content: identifier },
         argument2: value
     }
+
 }
 
 /** 
