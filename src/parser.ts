@@ -21,7 +21,7 @@ export function parseTokens(lex: Token[], debug: boolean) {
     let tempNode: SyntaxTree
     let root: SyntaxTree = undefined
 
-    while (true) {
+    while (currentIndex < tokens.length) {
         /* Parse token */
         tempNode = parse()
 
@@ -39,11 +39,6 @@ export function parseTokens(lex: Token[], debug: boolean) {
 
         /* Add child node */
         root.argument1 = tempNode
-
-        /* End of tokens */
-        if (currentIndex >= tokens.length) {
-            break;
-        }
     }
 
     /* Debug print */

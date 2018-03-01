@@ -22,13 +22,9 @@ export function parseFile(filePath: string, debug: boolean = false): Token[] {
 
     let tokens: Token[] = new Array()
     
-    while (true) {
+    while (currentCharacterIndex < content.length) {
         /* Parse character */
         tokens.push(parse())
-        /* EOF */
-        if (currentCharacterIndex >= content.length) {
-            break
-        }
     }
 
     return tokens
