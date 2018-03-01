@@ -5,6 +5,7 @@ import colors = require('colors/safe')
 import { logError, logInfo } from './src/debug-print'
 import lex = require('./src/lexical-analyser')
 import parser = require('./src/parser')
+import compiler = require('./src/compiler')
 
 /* <command> <app> <target file> */
 let filePath: string = (process.argv.length > 1) ? process.argv[2] : null
@@ -16,7 +17,7 @@ try {
 
     /* Run lex */
     logInfo('Running lexical analyser')
-    let tokens: Token[] = lex.readFile(filePath, false)
+    let tokens: Token[] = lex.readFile(filePath, true)
 
     /* Parse tokens */
     logInfo('Running parser')
@@ -24,7 +25,7 @@ try {
 
     /* Compile */
     logInfo('Running compiler')
-    console.log()
+    console.log(compiler.compile(tac))
 } catch (e) {
     /* Incorrect usage */
     logInfo("Usage: ts-node index.js <file>")

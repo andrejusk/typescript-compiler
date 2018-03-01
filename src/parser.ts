@@ -46,11 +46,14 @@ const END: Token = {
 }
 
 let root: SyntaxTree = {
-    content: {
-        type: Type.START,
-        name: 'START',
-        lexeme: null,
-        location: null
+    content: SEQUENCE,
+    argument1: { 
+        content: {
+            type: Type.START,
+            name: 'START',
+            lexeme: null,
+            location: null
+        }
     }
 }
 
