@@ -39,6 +39,21 @@ export function log(Token: Token): void {
     )
 }
 
+/** Debug print function */ 
+export function logProcedure(procedure: Procedure): void {
+    if (procedure == null) {
+        return
+    }
+
+    console.log(
+        colors.yellow(`  >>\t`) +
+        colors.cyan(`${procedure.action}\t`) +
+        colors.cyan(`${procedure.argument1}\t & `) +
+        colors.cyan(`${procedure.argument2}\t-> `) +
+        colors.cyan(`${procedure.result}`)
+    )
+}
+
 
 
 export function logInfo(message: string) {
