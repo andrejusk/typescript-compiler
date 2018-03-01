@@ -1,6 +1,6 @@
 
 import { Type, WHITESPACE, PUNCTUATION, RESERVED } from './types'
-import { log } from './debug-print'
+import { logToken } from './debug-print'
 
 import fs = require('fs')
 import { getMaxListeners } from 'cluster'
@@ -81,7 +81,7 @@ function parse(): Token {
     }
 
     if (debugFlag) {
-        log(Token)
+        logToken(Token)
     }
 
     return Token
@@ -155,21 +155,11 @@ function createToken(type: Type, name: string, lexeme: string): Token {
 
     let position: SourcePos = getSourcePos(location)
 
-    let value: number = undefined
-
-    if (type == Type.CONSTANT) {
-        value = Number(lexeme)
-        lexeme = null
-    } else {
-        value = null
-    }
-
     return {
         'type':         type,
         'name':         name,
         'lexeme':       lexeme,
-        'value':        value,
-        'location':     position,
+        'location':     position
     }
 }
 
