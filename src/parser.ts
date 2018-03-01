@@ -1,6 +1,7 @@
 
 import { logToken, logTree } from './debug-print'
-import { RESERVED, PUNCTUATION } from './types';
+import { Type, RESERVED, PUNCTUATION } from './types';
+import { create } from 'domain';
 
 let debugFlag: boolean
 
@@ -17,25 +18,54 @@ export function parseTokens(lex: Token[], debug: boolean) {
 
     tokens = lex
 
-    let node: SyntaxTree
-    let root: SyntaxTree
+    let tempNode: SyntaxTree
+    let root: SyntaxTree = undefined
 
     while (true) {
         /* Parse token */
-        node = parse()
-        if (debugFlag) {
-            logTree(node)
+        tempNode = parse()
+
+        if (root == undefined) {
+            /* Create empty root */
+            root = createEmptyTree()       
+        } else if (root.argument2 == undefined) {
+            /* Fill root */
+            root.argument2 = tempNode
+            /* Copy root */
+            tempNode = root
+            /* Create empty root */
+            root = createEmptyTree()
         }
+
+        /* Add child node */
+        root.argument1 = tempNode
+
         /* End of tokens */
         if (currentIndex >= tokens.length) {
             break;
         }
     }
 
+    /* Debug print */
+    if (debugFlag) {
+        logTree(root)
+    }
+
     return root
 }
 
-
+function createEmptyTree(): SyntaxTree {
+    return { 
+        content: { 
+            type: Type.SEQUENCE, 
+            name: 'SEQUENCE', 
+            lexeme: null, 
+            location: null 
+        }, 
+        argument1: undefined,
+        argument2: undefined
+    }
+}
 
 
 

@@ -55,7 +55,7 @@ export function logProcedure(procedure: Procedure): void {
 }
 
 /** Debug print function */ 
-export function logTree(node: SyntaxTree, indent: number = 0): void {
+export function logTree(node: SyntaxTree, indent: number = 0, side: string = ">"): void {
     /* Indent by the given amount */
     let index: number = 0
     let prefix: string = ""
@@ -63,7 +63,7 @@ export function logTree(node: SyntaxTree, indent: number = 0): void {
         prefix += `\t`
         index++
     }
-    prefix += colors.yellow(`>> `)
+    prefix += colors.yellow(`${side}> `)
 
     /* Don't print null nodes */
     if (node == null) {
@@ -72,11 +72,11 @@ export function logTree(node: SyntaxTree, indent: number = 0): void {
     }
 
     /* Infix traversal */
-    logTree(node.argument1, indent + 1)
+    logTree(node.argument1, indent + 1, '/')
     console.log(
         prefix + colors.cyan(`${node.content.name}\t`)
     )
-    logTree(node.argument2, indent + 1)
+    logTree(node.argument2, indent + 1, '\\')
 }
 
 

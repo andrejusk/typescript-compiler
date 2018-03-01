@@ -40,7 +40,8 @@ export enum Type {
     'PUNCTUATION',
     'IDENTIFIER',
     'CONSTANT',
-    'RESERVED'
+    'RESERVED',
+    'SEQUENCE'
 }
 
 /** Abbereviated lexeme types */
