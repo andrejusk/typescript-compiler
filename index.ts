@@ -16,7 +16,7 @@ try {
 
     /* Run lex */
     logInfo('Running lexical analyser')
-    let tokens: Token[] = lex.parseFile(filePath, false)
+    let tokens: Token[] = lex.readFile(filePath, false)
 
     /* Parse tokens */
     logInfo('Running parser')

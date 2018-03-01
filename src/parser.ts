@@ -3,8 +3,6 @@ import { logToken, logTree } from './debug-print'
 import { Type, RESERVED, PUNCTUATION } from './types';
 import { create } from 'domain';
 
-let debugFlag: boolean
-
 let tokens: Token[]
 let currentIndex: number = 0
 
@@ -14,8 +12,6 @@ let currentIndex: number = 0
  * @param debug Print debug messages.
  */
 export function parseTokens(lex: Token[], debug: boolean) {
-    debugFlag = debug
-
     tokens = lex
 
     let tempNode: SyntaxTree
@@ -42,7 +38,7 @@ export function parseTokens(lex: Token[], debug: boolean) {
     }
 
     /* Debug print */
-    if (debugFlag) {
+    if (debug) {
         logTree(root)
     }
 
@@ -162,7 +158,7 @@ function parsePrint(): SyntaxTree {
         content: action,
         argument1: { content: identifier }
     }
-    
+
 }
 
 
@@ -171,6 +167,11 @@ function parsePrint(): SyntaxTree {
  * a = b + c
 */
 function parseExpression(): SyntaxTree {
+
+    /* Sanity check equals sign */
+    if (getToken(currentIndex + 1).lexeme != "=") {
+        throw `Expected '=' at ${getToken(currentIndex).location.v + 1}:${getToken(currentIndex).location.h + 1}`
+    }
 
     let result: Token = getToken(currentIndex)
     let address1: Token = getToken(currentIndex + 2)
