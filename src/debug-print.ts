@@ -2,8 +2,8 @@
 import { Type, TypeS } from './types'
 import colors = require('colors/safe')
 
-/** Debug print function */ 
-export function log(Token: Token): void {
+/** Debug Token print function */ 
+export function logToken(Token: Token): void {
     let nameColor: colors
 
     switch (Token.type) {
@@ -36,6 +36,21 @@ export function log(Token: Token): void {
         colors.yellow(`${Token.location.v}`) +
         `:` +
         colors.yellow(`${Token.location.h}`)
+    )
+}
+
+/** Debug print function */ 
+export function logProcedure(procedure: Procedure): void {
+    if (procedure == null) {
+        return
+    }
+
+    console.log(
+        colors.yellow(`  >>\t`) +
+        colors.cyan(`${procedure.action}\t`) +
+        colors.cyan(`${procedure.argument1}\t & `) +
+        colors.cyan(`${procedure.argument2}\t-> `) +
+        colors.cyan(`${procedure.result}`)
     )
 }
 

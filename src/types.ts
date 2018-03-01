@@ -11,7 +11,6 @@ declare global {
         type: Type
         name: string
         lexeme: string
-        value: number
         location: SourcePos
     }
 
