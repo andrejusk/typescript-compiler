@@ -38,7 +38,21 @@ const VARIABLE: Token = {
     location: null 
 }
 
-let root: SyntaxTree = undefined
+const END: Token = { 
+    type: Type.END, 
+    name: 'END', 
+    lexeme: null, 
+    location: null 
+}
+
+let root: SyntaxTree = {
+    content: {
+        type: Type.START,
+        name: 'START',
+        lexeme: null,
+        location: null
+    }
+}
 
 let tokens: Token[]
 let currentIndex: number = 0
@@ -57,21 +71,18 @@ export function parseTokens(lex: Token[], debug: boolean) {
         /* Parse token */
         tempNode = parse()
 
-        if (root == undefined) {
-            /* Create empty root */
-            root = createEmptyTree()       
-        } else if (root.argument2 == undefined) {
-            /* Fill root */
-            root.argument2 = tempNode
-            /* Copy root */
-            tempNode = root
-            /* Create empty root */
-            root = createEmptyTree()
-        }
+        /* Fill root */
+        root.argument2 = tempNode
+        /* Copy root */
+        tempNode = root
+        /* Create empty root */
+        root = createEmptyTree()
 
         /* Add child node */
         root.argument1 = tempNode
     }
+
+    root.argument2 = { content: END }
 
     /* Debug print */
     if (debug) {

@@ -36,6 +36,7 @@ declare global {
 
 /** Lexim types */
 export enum Type {
+    'START',
     'WHITESPACE',
     'PUNCTUATION',
     'IDENTIFIER',
@@ -46,7 +47,8 @@ export enum Type {
     'ASSIGN',
     'DECLARE_ASSIGN',
     'SEQUENCE',
-    'VARIABLE'
+    'VARIABLE',
+    'END'
 }
 
 /** Abbereviated lexeme types */
