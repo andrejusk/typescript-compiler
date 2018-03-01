@@ -41,7 +41,12 @@ export enum Type {
     'IDENTIFIER',
     'CONSTANT',
     'RESERVED',
-    'SEQUENCE'
+    'TYPE',
+    'DECLARE',
+    'ASSIGN',
+    'DECLARE_ASSIGN',
+    'SEQUENCE',
+    'VARIABLE'
 }
 
 /** Abbereviated lexeme types */

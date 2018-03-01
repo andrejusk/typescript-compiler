@@ -3,6 +3,43 @@ import { logToken, logTree } from './debug-print'
 import { Type, RESERVED, PUNCTUATION } from './types';
 import { create } from 'domain';
 
+const DECLARE: Token = { 
+    type: Type.DECLARE, 
+    name: 'DECLARE', 
+    lexeme: null, 
+    location: null 
+}
+
+const DECLARE_ASSIGN: Token = { 
+    type: Type.DECLARE_ASSIGN, 
+    name: 'DECLARE_ASSIGN', 
+    lexeme: null, 
+    location: null 
+}
+
+const ASSIGN: Token = { 
+    type: Type.ASSIGN, 
+    name: 'ASSIGN', 
+    lexeme: null, 
+    location: null 
+}
+
+const SEQUENCE: Token = { 
+    type: Type.SEQUENCE, 
+    name: 'SEQUENCE', 
+    lexeme: null, 
+    location: null 
+}
+
+const VARIABLE: Token = { 
+    type: Type.VARIABLE, 
+    name: 'VARIABLE', 
+    lexeme: null, 
+    location: null 
+}
+
+let root: SyntaxTree = undefined
+
 let tokens: Token[]
 let currentIndex: number = 0
 
@@ -15,7 +52,6 @@ export function parseTokens(lex: Token[], debug: boolean) {
     tokens = lex
 
     let tempNode: SyntaxTree
-    let root: SyntaxTree = undefined
 
     while (currentIndex < tokens.length) {
         /* Parse token */
@@ -47,12 +83,7 @@ export function parseTokens(lex: Token[], debug: boolean) {
 
 function createEmptyTree(): SyntaxTree {
     return { 
-        content: { 
-            type: Type.SEQUENCE, 
-            name: 'SEQUENCE', 
-            lexeme: null, 
-            location: null 
-        }, 
+        content: SEQUENCE, 
         argument1: undefined,
         argument2: undefined
     }
@@ -97,17 +128,21 @@ function parseDeclaration(): SyntaxTree {
 
     let skipAhead: number
 
+    let action: Token
+
     let identifier: Token = getToken(currentIndex + 1)
     let type: Token = getToken(currentIndex + 3)
+
     let value: SyntaxTree
 
     /* Assign operator */
     if (getToken(currentIndex + 4).lexeme == PUNCTUATION['EQUALS']) {
-        type.name = `ASSIGN ${type.name}`
+        action = DECLARE_ASSIGN
         value = { content: getToken(currentIndex + 5) }
         skipAhead = 6
+        //TODO: check if constant is of correct type
     } else {
-        type.name = `DECLARE ${type.name}`
+        action = DECLARE
         value = null
         skipAhead = 4
     }
@@ -115,8 +150,12 @@ function parseDeclaration(): SyntaxTree {
     currentIndex += skipAhead
 
     return {
-        content: type,
-        argument1: { content: identifier },
+        content: action,
+        argument1: { 
+            content: VARIABLE,
+            argument1: { content: identifier },
+            argument2: { content: type }
+        },
         argument2: value
     }
 
@@ -175,14 +214,41 @@ function parseExpression(): SyntaxTree {
     let operation: Token = getToken(currentIndex + 3)
     let address2: Token = getToken(currentIndex + 4)
 
+    let type: Token = getType(result)
+    if (type == null) {
+        throw `${result.lexeme} not declared.`
+    }
+
     currentIndex += 5
 
     return {
-        content: operation,
-        argument1: { content: address1 },
-        argument2: { content: address2 }
+        content: ASSIGN,
+        argument1: {
+            content: VARIABLE,
+            argument1: { content: result },
+            argument2: { content: type }
+        },
+        argument2: {
+            content: operation,
+            argument1: { content: address1 },
+            argument2: { content: address2 }
+        }
     }
 
+}
+
+function getType(target: Token, tree: SyntaxTree = root): Token {
+    let result: Token = null
+    if (tree.argument1 != null) {
+        if (tree.argument1.content.lexeme == target.lexeme) {
+            return tree.argument2.content
+        }
+        result = getType(target, tree.argument1)
+    } 
+    if (result == null && tree.argument2 != null) {
+        result = getType(target, tree.argument2)
+    }
+    return result
 }
 
 
