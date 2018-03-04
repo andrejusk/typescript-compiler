@@ -65,7 +65,7 @@ let currentIndex: number = 0
  * @param lex Tokens to parse.
  * @param debug Print debug messages.
  */
-export function parseTokens(lex: Token[], debug: boolean) {
+export function parseTokens(lex: Token[], debug: boolean = false) {
     tokens = lex
 
     let tempNode: SyntaxTree
