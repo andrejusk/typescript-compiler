@@ -16,6 +16,7 @@ export function logToken(Token: Token): void {
         case Type.PUNCTUATION:
             nameColor = colors.white
             break
+        case Type.TYPE:
         case Type.RESERVED:
             nameColor = colors.blue
             break
@@ -31,26 +32,11 @@ export function logToken(Token: Token): void {
         colors.grey(`\t[`) +
         nameColor(`${TypeS[Token.type]}`) +
         colors.grey(`] `) +
-        nameColor(`${Token.name}\t`) +
+        nameColor(`${(Token.name.length > 7) ? (Token.name.substr(0, 7)) : Token.name}\t`) +
         colors.grey(`at `) +
         colors.yellow(`${Token.location.v}`) +
         `:` +
         colors.yellow(`${Token.location.h}`)
-    )
-}
-
-/** Debug print function */ 
-export function logProcedure(procedure: Procedure): void {
-    if (procedure == null) {
-        return
-    }
-
-    console.log(
-        colors.yellow(`  >>\t`) +
-        colors.cyan(`${procedure.action}\t`) +
-        colors.cyan(`${procedure.argument1}\t & `) +
-        colors.cyan(`${procedure.argument2}\t-> `) +
-        colors.cyan(`${procedure.result}`)
     )
 }
 

@@ -34,7 +34,7 @@ describe('Compiler', () => {
             //Execute typescript
             exec(`ts-node ${__dirname}\\..\\index.ts ${__dirname + scriptFolder + test.file}.ts --fast`,  (e, result, stderr) => {
                 //Compare result
-                expect(result).to.be.equal(`${test.result}\n\n`)
+                expect(result).to.be.equal(`${test.result}\n`)
                 done()
             })
         })

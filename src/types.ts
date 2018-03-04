@@ -18,15 +18,8 @@ declare global {
     interface SymbolMap {
         [name: string]: string
     }
-    
-    /** Form of Three Address Code (TAC) */
-    class Procedure {
-        action: string
-        argument1: string
-        argument2: string
-        result: string
-    }
 
+    /** Stores program syntax in a binary tree format */
     class SyntaxTree {
         content: Token
         argument1?: SyntaxTree
@@ -36,19 +29,24 @@ declare global {
 
 /** Lexim types */
 export enum Type {
-    'START',
+    /* Token types */
     'WHITESPACE',
     'PUNCTUATION',
     'IDENTIFIER',
     'CONSTANT',
     'RESERVED',
     'TYPE',
-    'DECLARE',
-    'ASSIGN',
-    'DECLARE_ASSIGN',
+
+    /* Program start/end flags */
+    'START',
+    'END',
     'SEQUENCE',
     'VARIABLE',
-    'END'
+
+    /* Variable operations */
+    'DECLARE',
+    'ASSIGN',
+    'DECLARE_ASSIGN'
 }
 
 /** Abbereviated lexeme types */
@@ -57,7 +55,8 @@ export enum TypeS {
     'PUNCT',
     'IDENT',
     'CONST',
-    'RESER'
+    'RESER',
+    'TYPED',
 }
 
 /** WHITE - Whitespace */
@@ -101,7 +100,12 @@ export const PUNCTUATION: SymbolMap = {
 /** RESER - Reserved */
 export const RESERVED: SymbolMap = {
     'LET':                  'let',
-    'NUMBER':               'number',
     'CONSOLE':              'console',
     'LOG':                  'log'
+}
+
+export const TYPES: SymbolMap = {
+    'NUMBER':       'number',
+    'STRING':       'string',
+    'BOOLEAN':      'boolean'
 }

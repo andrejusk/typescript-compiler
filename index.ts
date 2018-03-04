@@ -67,19 +67,17 @@ try {
     let returned: Buffer = child_process.execFileSync(`${tempFolder}${tempCompiled}`)
     console.log(returned.toString())
 
-    /* Cleanup */
-    log('Deleting temporary files...')
-    rimraf(tempFolder, () => {
-        log('Done!')
-    })
-
 } catch (e) {
     /* Incorrect usage */
-    log("Usage: ts-node index.js <file>")
+    //log("Usage: ts-node index.js <file>")
     logError(e)
     if (debug) {
         logError(`Stack: ${(<Error>e).stack}`)
     }
 }
 
-console.log()
+/* Cleanup */
+log('Deleting temporary files...')
+rimraf(tempFolder, () => {
+    log('Done!')
+})
