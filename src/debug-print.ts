@@ -81,6 +81,10 @@ export function logTree(node: SyntaxTree, indent: number = 0, side: string = ">"
 
 
 
+export function logOutput(message: string) {
+    console.log(colors.green('[OUTPUT] ') + message)
+}
+
 export function logInfo(message: string) {
     console.log(colors.blue('[INFO] ') + message)
 }
