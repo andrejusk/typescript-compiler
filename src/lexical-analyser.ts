@@ -65,21 +65,46 @@ function read(): Token {
         return readNext()
     }
 
-    let Token: Token
+    /* Read strings */
+    if (getCurrentCharacter() == PUNCTUATION['SINGLE_QUOTE']) {
+        nextCharacter()
+        let string: string = skipUntil(PUNCTUATION['SINGLE_QUOTE'])
+        nextCharacter()
+        
+        return createToken(
+            Type.CONSTANT,
+            TYPES.string,
+            string
+        )
+    } 
+
+    else if (getCurrentCharacter() == PUNCTUATION['DOUBLE_QUOTE']) {
+        nextCharacter()
+        let string: string = skipUntil(PUNCTUATION['DOUBLE_QUOTE'])
+        nextCharacter()
+
+        return createToken(
+            Type.CONSTANT,
+            TYPES['STRING'],
+            string
+        )
+    }
+
+    let token: Token
 
     /* Parse punctuation */
     let tempKey = getKey(PUNCTUATION, getCurrentCharacter())
     if (tempKey != null) {
-        Token = createToken(Type.PUNCTUATION, tempKey, PUNCTUATION[tempKey])
+        token = createToken(Type.PUNCTUATION, tempKey, PUNCTUATION[tempKey])
         nextCharacter()
     }
 
     /* Parse words */
     else {
-        Token = readNextWord()
+        token = readNextWord()
     }
 
-    return Token
+    return token
 
 }
 
@@ -128,7 +153,7 @@ function readNextWord(): Token {
 
     /* Constant */
     else if (!isNaN(Number(word))) {
-        token = createToken(Type.CONSTANT, word, word)
+        token = createToken(Type.CONSTANT, TYPES['NUMBER'], word)
     }
 
     /* Identifier */
@@ -232,10 +257,13 @@ function nextCharacter(): void {
  * Moves index to next occurance of target.
  * @param target Character to look for.
  */
-function skipUntil(target: string): void {
+function skipUntil(target: string): string {
+    let text: string = ""
     while (getCurrentCharacter() != target) {
-        return nextCharacter()
+        text += getCurrentCharacter()
+        nextCharacter()
     }
+    return text
 }
 
 

@@ -78,7 +78,7 @@ export const PUNCTUATION: SymbolMap = {
     'SEIMCOLON':    ';',
     'DOT':          '.',
     'SINGLE_QUOTE': '\'',
-    'DOUBLE_QUOTE': '.',
+    'DOUBLE_QUOTE': '"',
     'BACKSLASH':    '\\',
     'FWDSLASH':     '/',
     'ASTERISK':     '*',
@@ -99,9 +99,9 @@ export const PUNCTUATION: SymbolMap = {
 
 /** RESER - Reserved */
 export const RESERVED: SymbolMap = {
-    'LET':                  'let',
-    'CONSOLE':              'console',
-    'LOG':                  'log'
+    'LET':          'let',
+    'CONSOLE':      'console',
+    'LOG':          'log'
 }
 
 export const TYPES: SymbolMap = {
