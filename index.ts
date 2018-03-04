@@ -1,7 +1,8 @@
 
 import fs = require('fs')
 import colors = require('colors/safe')
-var rimraf = require('rimraf')
+import rimraf = require('rimraf')
+import process = require('process')
 
 import { logError, logInfo, logCode, logOutput } from './src/debug-print'
 import lex = require('./src/lexical-analyser')
@@ -10,7 +11,7 @@ import compiler = require('./src/compiler')
 import optimiser = require('./src/optimiser')
 import child_process = require('child_process')
 
-const tempFolder = './tmp/'
+const tempFolder = `.\\tmp-${process.pid}\\`
 const tempSource = 'compiled.c'
 const tempCompiled = 'compiled.exe'
 
