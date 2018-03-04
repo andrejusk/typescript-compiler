@@ -1,7 +1,7 @@
 import { Type } from './types'
 import { logTree, logToken } from './debug-print'
 
-export function compile(tree: SyntaxTree): String {
+export function compile(tree: SyntaxTree): string {
     //logTree(root)
     let code: string
 
@@ -37,7 +37,7 @@ export function compile(tree: SyntaxTree): String {
     }
 
     else if (tree.content.name == "PLUS") {
-        return `${compile(tree.argument1)}+${compile(tree.argument2)}`
+        return `(${compile(tree.argument1)} + ${compile(tree.argument2)})`
     }
 
     else if (tree.content.type == Type.IDENTIFIER) {
