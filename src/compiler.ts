@@ -40,6 +40,10 @@ export function compile(tree: SyntaxTree): string {
         return `(${compile(tree.argument1)} + ${compile(tree.argument2)})`
     }
 
+    else if (tree.content.name == "MINUS") {
+        return `(${compile(tree.argument1)} - ${compile(tree.argument2)})`
+    }
+
     else if (tree.content.name == "ASTERISK") {
         return `(${compile(tree.argument1)} * ${compile(tree.argument2)})`
     }

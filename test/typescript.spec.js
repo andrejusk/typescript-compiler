@@ -15,8 +15,8 @@ let typescriptTests = [
     { 'goal': 'multiplies', 'file': 'number-multiplication',    'result': '6' },
 ]
 
-describe('Typescript scripts', () => {
-    typescriptTests.forEach((test) => {
+typescriptTests.forEach((test) => {
+    describe('Typescript script', () => {
         it(test.goal, (done) => {
             /* Execute typescript */
             exec(`ts-node ${__dirname + scriptFolder + test.file}.ts --fast`, (e, result, stderr) => {
@@ -27,7 +27,7 @@ describe('Typescript scripts', () => {
         })
     })
 })
-/*
+
 describe('Compiler', () => {
     typescriptTests.forEach((test) => {
         it(test.goal, (done) => {
@@ -40,4 +40,3 @@ describe('Compiler', () => {
         })
     })
 })
-*/
