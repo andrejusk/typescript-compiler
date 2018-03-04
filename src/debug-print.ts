@@ -16,6 +16,7 @@ export function logToken(Token: Token): void {
         case Type.PUNCTUATION:
             nameColor = colors.white
             break
+        case Type.TYPE:
         case Type.RESERVED:
             nameColor = colors.blue
             break

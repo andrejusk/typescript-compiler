@@ -1,5 +1,5 @@
 
-import { Type, WHITESPACE, PUNCTUATION, RESERVED } from './types'
+import { Type, WHITESPACE, PUNCTUATION, RESERVED, TYPES } from './types'
 import { logToken } from './debug-print'
 
 import fs = require('fs')
@@ -114,11 +114,16 @@ function readNextWord(): Token {
 
     setCurrentCharacterIndex(--tempIndex)
 
-    let key: string = getKey(RESERVED, word)
+    let reservedKey: string = getKey(RESERVED, word)
+    let typeKey: string = getKey(TYPES, word)
 
     /* Reserved word */
-    if (key != null) {   
-        token = createToken(Type.RESERVED, key, word)
+    if (reservedKey != null) {   
+        token = createToken(Type.RESERVED, reservedKey, word)
+    }
+
+    else if (typeKey != null) {   
+        token = createToken(Type.TYPE, typeKey, word)
     }
 
     /* Constant */

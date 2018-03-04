@@ -29,24 +29,24 @@ declare global {
 
 /** Lexim types */
 export enum Type {
-    /* Program start/end flags */
-    'START',
-    'END',
-    'SEQUENCE',
-
-    /* Variable operations */
-    'DECLARE',
-    'ASSIGN',
-    'DECLARE_ASSIGN',
-
     /* Token types */
     'WHITESPACE',
     'PUNCTUATION',
     'IDENTIFIER',
     'CONSTANT',
-    'VARIABLE',
     'RESERVED',
     'TYPE',
+
+    /* Program start/end flags */
+    'START',
+    'END',
+    'SEQUENCE',
+    'VARIABLE',
+
+    /* Variable operations */
+    'DECLARE',
+    'ASSIGN',
+    'DECLARE_ASSIGN'
 }
 
 /** Abbereviated lexeme types */
@@ -55,7 +55,8 @@ export enum TypeS {
     'PUNCT',
     'IDENT',
     'CONST',
-    'RESER'
+    'RESER',
+    'TYPED',
 }
 
 /** WHITE - Whitespace */
