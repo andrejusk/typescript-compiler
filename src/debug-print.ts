@@ -88,3 +88,8 @@ export function logInfo(message: string) {
 export function logError(message: string) {
     console.log(colors.red(message))
 }
+
+export function logCode(code: string) {
+    console.log(colors.yellow('[OUTPUT] ') + 'Compiled code:')
+    console.log('\t' + code.split('\n').join('\n\t'))
+}
