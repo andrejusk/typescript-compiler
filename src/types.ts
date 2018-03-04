@@ -19,6 +19,7 @@ declare global {
         [name: string]: string
     }
 
+    /** Stores program syntax in a binary tree format */
     class SyntaxTree {
         content: Token
         argument1?: SyntaxTree
@@ -28,19 +29,24 @@ declare global {
 
 /** Lexim types */
 export enum Type {
+    /* Program start/end flags */
     'START',
+    'END',
+    'SEQUENCE',
+
+    /* Variable operations */
+    'DECLARE',
+    'ASSIGN',
+    'DECLARE_ASSIGN',
+
+    /* Token types */
     'WHITESPACE',
     'PUNCTUATION',
     'IDENTIFIER',
     'CONSTANT',
+    'VARIABLE',
     'RESERVED',
     'TYPE',
-    'DECLARE',
-    'ASSIGN',
-    'DECLARE_ASSIGN',
-    'SEQUENCE',
-    'VARIABLE',
-    'END'
 }
 
 /** Abbereviated lexeme types */
@@ -93,7 +99,12 @@ export const PUNCTUATION: SymbolMap = {
 /** RESER - Reserved */
 export const RESERVED: SymbolMap = {
     'LET':                  'let',
-    'NUMBER':               'number',
     'CONSOLE':              'console',
     'LOG':                  'log'
+}
+
+export const TYPES: SymbolMap = {
+    'NUMBER':       'number',
+    'STRING':       'string',
+    'BOOLEAN':      'boolean'
 }
