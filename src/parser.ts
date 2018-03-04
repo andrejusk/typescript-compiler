@@ -295,24 +295,28 @@ function consume(number: number) {
 
 
 function createConstant(token: Token): SyntaxTree {
+    let type: Token
+    if (token.type != Type.CONSTANT) {
+        type = getType(token)
+    } else {
+        type = { 
+            type: Type.TYPE, 
+            name: token.name, 
+            lexeme: token.name, 
+            location: null 
+        }  
+    }
     return {
         content: CONSTANT,
         argument1: { 
             content: { 
-                type: Type.CONSTANT, 
+                type: Type.IDENTIFIER,
                 name: token.lexeme, 
                 lexeme: token.lexeme, 
                 location: null 
             } 
         },
-        argument2: { 
-            content: { 
-                type: Type.TYPE, 
-                name: token.name, 
-                lexeme: token.name, 
-                location: null 
-            }  
-        }
+        argument2: { content: type }
     }
 }
 

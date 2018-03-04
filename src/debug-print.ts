@@ -60,7 +60,7 @@ export function logTree(node: SyntaxTree, indent: number = 0, side: string = ">"
     /* Infix traversal */
     logTree(node.argument1, indent + 1, '/')
     console.log(
-        prefix + colors.cyan(`${node.content.name}\t`)
+        prefix + colors.cyan(`[${Type[node.content.type]}] - ${node.content.name}, ${node.content.lexeme}\t`)
     )
     logTree(node.argument2, indent + 1, '\\')
 }
