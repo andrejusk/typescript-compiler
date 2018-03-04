@@ -32,7 +32,7 @@ export function logToken(Token: Token): void {
         colors.grey(`\t[`) +
         nameColor(`${TypeS[Token.type]}`) +
         colors.grey(`] `) +
-        nameColor(`${Token.name}\t`) +
+        nameColor(`${(Token.name.length > 7) ? (Token.name.substr(0, 7)) : Token.name}\t`) +
         colors.grey(`at `) +
         colors.yellow(`${Token.location.v}`) +
         `:` +
