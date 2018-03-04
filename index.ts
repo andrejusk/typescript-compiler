@@ -19,10 +19,10 @@ const gccDir = 'C:\\MinGW\\bin\\'
 const gcc = 'g++.exe'
 const compile = `${gccDir}${gcc} ${tempFolder}${tempSource} -o ${tempFolder}${tempCompiled}`
 
-const debug = false
-
-/* <command> <app> <target file> */
+/* <command> <app> <target file> <debug> */
 let filePath: string = (process.argv.length > 1) ? process.argv[2] : null
+
+const debug = (process.argv.length > 2) ? (process.argv[3] == "--debug") : false
 
 let log = (message: string) => {
     if (debug) {
@@ -37,11 +37,11 @@ try {
 
     /* Get tokens */
     log('Running lexical analyser...')
-    let tokens: Token[] = lex.readFile(filePath)
+    let tokens: Token[] = lex.readFile(filePath, debug)
 
     /* Parse tokens into tree */
     log('Running parser...')
-    let syntaxTree: SyntaxTree = parser.parseTokens(tokens)
+    let syntaxTree: SyntaxTree = parser.parseTokens(tokens, debug)
 
     /* Optmise tree */
     log('Running optimiser...')
