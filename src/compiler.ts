@@ -29,11 +29,15 @@ export function compile(tree: SyntaxTree): string {
 
     else if (tree.content.name == "DECLARE_ASSIGN") {
         //TODO TYPES
-        return `int ${tree.argument1.argument1.content.lexeme} = ${compile(tree.argument2)};\n`
+        return `int ${tree.argument1.argument1.content.lexeme} = ${compile(tree.argument2.argument1)};\n`
     }
 
     else if (tree.content.type == Type.CONSTANT) {
-        return tree.content.lexeme
+        if (tree.argument2.content.name == "string") {
+            return `"${tree.argument1.content.lexeme}"`
+        } else {
+            return tree.argument1.content.lexeme
+        }
     }
 
     else if (tree.content.name == "PLUS") {
@@ -54,7 +58,15 @@ export function compile(tree: SyntaxTree): string {
 
     else if (tree.content.name == "LOG") {
         //TODO: types
-        return `printf("%d", ${tree.argument1.content.lexeme});\n`
+        let type: string = ""
+        if (tree.argument1.argument2.content.lexeme == "string") {
+            type = "%s"
+        } else if (tree.argument1.argument2.content.lexeme == "number") {
+            type = "%d"
+        } else {
+            type = "%s"
+        }
+        return `printf("${type}", ${compile(tree.argument1)});\n`
     }
 
     else {

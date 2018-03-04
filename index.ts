@@ -50,6 +50,7 @@ try {
     /* Compile C code from tree */
     log('Running compiler...')
     let code: string = compiler.compile(optimisedTree)
+    log(`Compiled code: \n${code}`)
 
     /* Write C code to file */
     log('Saving compiled code...')

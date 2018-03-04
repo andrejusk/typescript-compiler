@@ -1,7 +1,6 @@
 
 import { logToken, logTree } from './debug-print'
-import { Type, RESERVED, PUNCTUATION } from './types';
-import { create } from 'domain';
+import { Type, RESERVED, PUNCTUATION } from './types'
 
 const DECLARE: Token = { 
     type: Type.DECLARE, 
@@ -34,6 +33,13 @@ const SEQUENCE: Token = {
 const VARIABLE: Token = { 
     type: Type.VARIABLE, 
     name: 'VARIABLE', 
+    lexeme: null, 
+    location: null 
+}
+
+const CONSTANT: Token = { 
+    type: Type.CONSTANT, 
+    name: 'CONSTANT', 
     lexeme: null, 
     location: null 
 }
@@ -152,7 +158,7 @@ function parseDeclaration(): SyntaxTree {
     /* Assign operator */
     if (getToken(currentIndex + 4).lexeme == PUNCTUATION['EQUALS']) {
         action = DECLARE_ASSIGN
-        value = { content: getToken(currentIndex + 5) }
+        value = createConstant(getToken(currentIndex + 5))
         skipAhead = 6
         //TODO: check if constant is of correct type
     } else {
@@ -206,7 +212,7 @@ function parsePrint(): SyntaxTree {
     currentIndex += 6
     return {
         content: action,
-        argument1: { content: identifier }
+        argument1: createConstant(identifier)
     }
 
 }
@@ -224,9 +230,14 @@ function parseExpression(): SyntaxTree {
     }
 
     let result: Token = getToken(currentIndex)
+
     let address1: Token = getToken(currentIndex + 2)
+    let type1: Token = getType(address1, root)
+
     let operation: Token = getToken(currentIndex + 3)
+
     let address2: Token = getToken(currentIndex + 4)
+    let type2: Token = getType(address2, root)
 
     let type: Token = getType(result)
     if (type == null) {
@@ -244,11 +255,18 @@ function parseExpression(): SyntaxTree {
         },
         argument2: {
             content: operation,
-            argument1: { content: address1 },
-            argument2: { content: address2 }
+            argument1: { 
+                content: VARIABLE,
+                argument1: { content: address1 },
+                argument2: { content: type1}
+            },
+            argument2: { 
+                content: VARIABLE,
+                argument1: { content: address2 },
+                argument2: { content: type2}
+            }
         }
     }
-
 }
 
 function getType(target: Token, tree: SyntaxTree = root): Token {
@@ -275,6 +293,28 @@ function consume(number: number) {
     }
 }
 
+
+function createConstant(token: Token): SyntaxTree {
+    return {
+        content: CONSTANT,
+        argument1: { 
+            content: { 
+                type: Type.CONSTANT, 
+                name: token.lexeme, 
+                lexeme: token.lexeme, 
+                location: null 
+            } 
+        },
+        argument2: { 
+            content: { 
+                type: Type.TYPE, 
+                name: token.name, 
+                lexeme: token.name, 
+                location: null 
+            }  
+        }
+    }
+}
 
 
 function getToken(index: number): Token {
