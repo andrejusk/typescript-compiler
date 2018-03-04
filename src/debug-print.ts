@@ -40,21 +40,6 @@ export function logToken(Token: Token): void {
 }
 
 /** Debug print function */ 
-export function logProcedure(procedure: Procedure): void {
-    if (procedure == null) {
-        return
-    }
-
-    console.log(
-        colors.yellow(`  >>\t`) +
-        colors.cyan(`${procedure.action}\t`) +
-        colors.cyan(`${procedure.argument1}\t & `) +
-        colors.cyan(`${procedure.argument2}\t-> `) +
-        colors.cyan(`${procedure.result}`)
-    )
-}
-
-/** Debug print function */ 
 export function logTree(node: SyntaxTree, indent: number = 0, side: string = ">"): void {
     /* Indent by the given amount */
     let index: number = 0

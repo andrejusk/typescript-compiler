@@ -18,14 +18,6 @@ declare global {
     interface SymbolMap {
         [name: string]: string
     }
-    
-    /** Form of Three Address Code (TAC) */
-    class Procedure {
-        action: string
-        argument1: string
-        argument2: string
-        result: string
-    }
 
     class SyntaxTree {
         content: Token
