@@ -28,8 +28,8 @@ typescriptTests.forEach((test) => {
     })
 })
 
-describe('Compiler', () => {
-    typescriptTests.forEach((test) => {
+typescriptTests.forEach((test) => {
+    describe('Compiler', () => {
         it(test.goal, (done) => {
             //Execute typescript
             exec(`ts-node ${__dirname}\\..\\index.ts ${__dirname + scriptFolder + test.file}.ts --fast`,  (e, result, stderr) => {
