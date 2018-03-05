@@ -18,17 +18,14 @@ export function compile(tree: SyntaxTree): string {
     }
 
     else if (tree.content.name == "DECLARE") {
-        //TODO TYPES
         return `int ${tree.argument1.argument1.content.lexeme};\n`
     }
 
     else if (tree.content.name == "ASSIGN") {
-        //TODO TYPES
         return `${tree.argument1.argument1.content.lexeme} = ${compile(tree.argument2)};\n`
     }
 
     else if (tree.content.name == "DECLARE_ASSIGN") {
-        //TODO TYPES
         return `int ${tree.argument1.argument1.content.lexeme} = ${compile(tree.argument2.argument1)};\n`
     }
 
@@ -65,7 +62,6 @@ export function compile(tree: SyntaxTree): string {
     }
 
     else if (tree.content.name == "LOG") {
-        //TODO: types
         let type: string = ""
         if (tree.argument1.argument2.content.lexeme == "string") {
             type = "%s"
