@@ -143,7 +143,7 @@ function parseDeclaration(): SyntaxTree {
 
     /* Sanity check colon */
     if (getToken(currentIndex + 2).lexeme != ":") {
-        throw `Expected ':' at ${getToken(currentIndex + 1).location.v + 1}:${getToken(currentIndex + 1).location.h + 1}`
+        throw `Expected ':' at ${getLocation(getToken(currentIndex + 1))}`
     }
 
     let skipAhead: number
@@ -192,19 +192,19 @@ function parsePrint(): SyntaxTree {
 
     /* Sanity check dot */
     if (getToken(currentIndex + 1).lexeme != ".") {
-        throw `Expected '.' at ${getToken(currentIndex).location.v + 1}:${getToken(currentIndex).location.h + 1}`
+        throw `Expected '.' at ${getLocation(getToken(currentIndex))}`
     }
     /* Sanity check log function */
     if (getToken(currentIndex + 2).lexeme != "log") {
-        throw `Expected 'log' at ${getToken(currentIndex + 1).location.v + 1}:${getToken(currentIndex + 1).location.h + 1}`
+        throw `Expected 'log' at ${getLocation(getToken(currentIndex + 1))}`
     }
     /* Sanity check parenthesis */
     if (getToken(currentIndex + 3).lexeme != "(") {
-        throw `Expected '(' at ${getToken(currentIndex + 2).location.v + 1}:${getToken(currentIndex + 2).location.h + 1}`
+        throw `Expected '(' at ${getLocation(getToken(currentIndex + 2))}`
     }
     /* Sanity check parenthesis */
     if (getToken(currentIndex + 5).lexeme != ")") {
-        throw `Expected ')' at ${getToken(currentIndex + 4).location.v + 1}:${getToken(currentIndex + 4).location.h + 1}`
+        throw `Expected ')' at ${getLocation(getToken(currentIndex + 4))}`
     }
 
     let action: Token = getToken(currentIndex + 2)
@@ -234,7 +234,7 @@ function parseExpression(): SyntaxTree {
     let type: Token = getType(result)
 
     if (type == null) {
-        throw `${result.lexeme} not declared.`
+        throw `${result.lexeme} not declared at ${getLocation(result)}.`
     }
 
     if (type.name != "NUMBER") {
@@ -257,7 +257,7 @@ function parseExpression(): SyntaxTree {
             }
             adjust = 2
         } else {
-            throw `Expected operator at ${getToken(currentIndex).location.v + 1}:${getToken(currentIndex).location.h + 1}`
+            throw `Expected operator at ${getLocation(operation)}.`
         }
     } else {
         let address1: Token = getToken(currentIndex + 2)
@@ -269,7 +269,7 @@ function parseExpression(): SyntaxTree {
         let type2: Token = getType(address2, root)
 
         if (type1.name != type2.name) {
-            throw `${address1.lexeme} and ${address2.lexeme} are not of same type.`
+            throw `${address1.lexeme} and ${address2.lexeme} are not of same type at ${getLocation(operation)}.`
         }
     
         adjust = 5
@@ -313,6 +313,10 @@ function getType(target: Token, tree: SyntaxTree = root): Token {
         result = getType(target, tree.argument2)
     }
     return result
+}
+
+function getLocation(token: Token): string {
+    return `${token.location.v + 1}:${token.location.h + 1}`
 }
 
 
