@@ -92,7 +92,23 @@ function read(): Token {
 
     let token: Token
 
-    /* Parse punctuation */
+    /* Parse double punctuation */
+    if (getCurrentCharacter() == PUNCTUATION['PLUS'] && peekNextCharacter() == PUNCTUATION['PLUS']) {
+        nextCharacter()
+        nextCharacter()
+        return createToken(
+            Type.PUNCTUATION, 'INCREMENT', PUNCTUATION['INCREMENT']
+        )
+    }
+    if (getCurrentCharacter() == PUNCTUATION['MINUS'] && peekNextCharacter() == PUNCTUATION['MINUS']) {
+        nextCharacter()
+        nextCharacter()
+        return createToken(
+            Type.PUNCTUATION, 'DECREMENT', PUNCTUATION['DECREMENT']
+        )
+    }
+
+    /* Parse single punctuation */
     let tempKey = getKey(PUNCTUATION, getCurrentCharacter())
     if (tempKey != null) {
         token = createToken(Type.PUNCTUATION, tempKey, PUNCTUATION[tempKey])

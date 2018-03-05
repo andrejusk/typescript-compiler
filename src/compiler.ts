@@ -40,6 +40,14 @@ export function compile(tree: SyntaxTree): string {
         }
     }
 
+    else if (tree.content.name == "INCREMENT") {
+        return `(${compile(tree.argument1)}++);\n`
+    }
+
+    else if (tree.content.name == "DECREMENT") {
+        return `(${compile(tree.argument1)}--);\n`
+    }
+
     else if (tree.content.name == "PLUS") {
         return `(${compile(tree.argument1)} + ${compile(tree.argument2)})`
     }
