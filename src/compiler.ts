@@ -65,7 +65,6 @@ export function compile(tree: SyntaxTree): string {
     }
 
     else if (tree.content.name == "LOG") {
-        //TODO: types
         let type: string = ""
         if (tree.argument1.argument2.content.lexeme == "string") {
             type = "%s"

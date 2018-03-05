@@ -231,6 +231,16 @@ function parseExpression(): SyntaxTree {
     let adjust: number = 0
 
     let result: Token = getToken(currentIndex)
+    let type: Token = getType(result)
+
+    if (type == null) {
+        throw `${result.lexeme} not declared.`
+    }
+
+    if (type.name != "NUMBER") {
+        throw `${result.lexeme} is not of number type.` 
+    }
+
     let operation: Token = getToken(currentIndex + 1)
 
     /* Check type of operation */
@@ -242,7 +252,7 @@ function parseExpression(): SyntaxTree {
                     content: result
                 },
                 argument2: {
-                    content: getType(result)
+                    content: type
                 }
             }
             adjust = 2
@@ -257,10 +267,9 @@ function parseExpression(): SyntaxTree {
     
         let address2: Token = getToken(currentIndex + 4)
         let type2: Token = getType(address2, root)
-    
-        let type: Token = getType(result)
-        if (type == null) {
-            throw `${result.lexeme} not declared.`
+
+        if (type1.name != type2.name) {
+            throw `${address1.lexeme} and ${address2.lexeme} are not of same type.`
         }
     
         adjust = 5
@@ -277,12 +286,12 @@ function parseExpression(): SyntaxTree {
                 argument1: { 
                     content: VARIABLE,
                     argument1: { content: address1 },
-                    argument2: { content: type1}
+                    argument2: { content: type1 }
                 },
                 argument2: { 
                     content: VARIABLE,
                     argument1: { content: address2 },
-                    argument2: { content: type2}
+                    argument2: { content: type2 }
                 }
             }
         }
@@ -306,15 +315,6 @@ function getType(target: Token, tree: SyntaxTree = root): Token {
     return result
 }
 
-
-
-function consume(number: number) {
-    let index: number = 0
-    while (index < number) {
-        index++
-        currentIndex++
-    }
-}
 
 
 function createConstant(token: Token): SyntaxTree {
