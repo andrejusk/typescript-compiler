@@ -94,7 +94,9 @@ export const PUNCTUATION: SymbolMap = {
     'O_ANG_BR':     '<',
     'C_ANG_BR':     '>',
     'O_SQR_BR':     '[',
-    'C_SQR_BR':     ']'
+    'C_SQR_BR':     ']',
+    'INCREMENT':    '++',
+    'DECREMENT':    '--'
 }
 
 /** RESER - Reserved */

@@ -221,52 +221,75 @@ function parsePrint(): SyntaxTree {
 /** 
  * 0 1 2 3 4
  * a = b + c
+ * 
+ * 01
+ * a++
+ * a--
 */
 function parseExpression(): SyntaxTree {
-
-    /* Sanity check equals sign */
-    if (getToken(currentIndex + 1).lexeme != "=") {
-        throw `Expected '=' at ${getToken(currentIndex).location.v + 1}:${getToken(currentIndex).location.h + 1}`
-    }
+    let expression: SyntaxTree
+    let adjust: number = 0
 
     let result: Token = getToken(currentIndex)
+    let operation: Token = getToken(currentIndex + 1)
 
-    let address1: Token = getToken(currentIndex + 2)
-    let type1: Token = getType(address1, root)
-
-    let operation: Token = getToken(currentIndex + 3)
-
-    let address2: Token = getToken(currentIndex + 4)
-    let type2: Token = getType(address2, root)
-
-    let type: Token = getType(result)
-    if (type == null) {
-        throw `${result.lexeme} not declared.`
-    }
-
-    currentIndex += 5
-
-    return {
-        content: ASSIGN,
-        argument1: {
-            content: VARIABLE,
-            argument1: { content: result },
-            argument2: { content: type }
-        },
-        argument2: {
-            content: operation,
-            argument1: { 
+    /* Check type of operation */
+    if (operation.lexeme != "=") {
+        if (operation.lexeme == "++" || operation.lexeme == "--") {
+            expression = {
+                content: operation,
+                argument1: {
+                    content: result
+                },
+                argument2: {
+                    content: getType(result)
+                }
+            }
+            adjust = 2
+        } else {
+            throw `Expected operator at ${getToken(currentIndex).location.v + 1}:${getToken(currentIndex).location.h + 1}`
+        }
+    } else {
+        let address1: Token = getToken(currentIndex + 2)
+        let type1: Token = getType(address1, root)
+    
+        let operation: Token = getToken(currentIndex + 3)
+    
+        let address2: Token = getToken(currentIndex + 4)
+        let type2: Token = getType(address2, root)
+    
+        let type: Token = getType(result)
+        if (type == null) {
+            throw `${result.lexeme} not declared.`
+        }
+    
+        adjust = 5
+    
+        expression = {
+            content: ASSIGN,
+            argument1: {
                 content: VARIABLE,
-                argument1: { content: address1 },
-                argument2: { content: type1}
+                argument1: { content: result },
+                argument2: { content: type }
             },
-            argument2: { 
-                content: VARIABLE,
-                argument1: { content: address2 },
-                argument2: { content: type2}
+            argument2: {
+                content: operation,
+                argument1: { 
+                    content: VARIABLE,
+                    argument1: { content: address1 },
+                    argument2: { content: type1}
+                },
+                argument2: { 
+                    content: VARIABLE,
+                    argument1: { content: address2 },
+                    argument2: { content: type2}
+                }
             }
         }
     }
+
+    currentIndex += adjust
+    return expression
 }
 
 function getType(target: Token, tree: SyntaxTree = root): Token {
