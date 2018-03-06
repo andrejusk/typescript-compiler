@@ -257,13 +257,41 @@ function parseExpression(): SyntaxTree {
     /* Check type of operation */
     if (operation.lexeme != "=") {
         if (operation.lexeme == "++" || operation.lexeme == "--") {
+            if (operation.lexeme == "++") {
+                operation = {
+                    type: Type.PUNCTUATION,
+                    name: "PLUS",
+                    lexeme: "+",
+                    location: operation.location
+                }
+            } else {
+                operation = {
+                    type: Type.PUNCTUATION,
+                    name: "MINUS",
+                    lexeme: "-",
+                    location: operation.location
+                }
+            }            
             expression = {
-                content: operation,
+                content: ASSIGN,
                 argument1: {
-                    content: result
+                    content: VARIABLE,
+                    argument1: { content: result },
+                    argument2: { content: type }
                 },
                 argument2: {
-                    content: type
+                    content: operation,
+                    argument1: { 
+                        content: VARIABLE,
+                        argument1: { content: result },
+                        argument2: { content: type }
+                    },
+                    argument2: createConstant({
+                        type: Type.CONSTANT,
+                        name: "number",
+                        lexeme: "1",
+                        location: null
+                    })
                 }
             }
             adjust = 2
