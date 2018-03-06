@@ -206,7 +206,7 @@ function checkConstantOperations(node: SyntaxTree) {
                         }
                     },
                     argument2: {
-                        content: node.argument1.argument1.argument2
+                        content: node.argument1.argument1.argument2.content
                     }
                 }
             /* String perhaps */
@@ -241,7 +241,7 @@ function checkConstantOperations(node: SyntaxTree) {
                         }
                     },
                     argument2: {
-                        content: node.argument2.argument1.argument2
+                        content: node.argument2.argument1.argument2.content
                     }
                 }
             /* String perhaps */
