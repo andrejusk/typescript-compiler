@@ -84,7 +84,13 @@ function isUnused(test: SyntaxTree, node: SyntaxTree): boolean {
         return true
     }
 
+    /* Ignore self */
     if (node == test) {
+        return true
+    }
+
+    /* Ignore declarations */
+    if (node.content.type == Type['ASSIGN']) {
         return true
     }
 
