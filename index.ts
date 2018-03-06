@@ -45,7 +45,7 @@ try {
 
     /* Optmise tree */
     log('Running optimiser...')
-    let optimisedTree: SyntaxTree = optimiser.optimise(syntaxTree)
+    let optimisedTree: SyntaxTree = optimiser.optimise(syntaxTree, debug)
 
     /* Compile C code from tree */
     log('Running compiler...')
