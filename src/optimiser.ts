@@ -53,25 +53,28 @@ function runOptimiser(node: SyntaxTree) {
         remove(node, root)
     }
 
-    if (node.content.type == Type['ASSIGN']) {
+    else if (node.content.type == Type['ASSIGN']) {
         if (isUnique(node, root)) {
-            replace(node.argument1, node.argument2, root)
+            replaceConstant(node.argument1, node.argument2, root)
         }
         if (isUnused(node, root)) {
             remove(node, root)
         }
     }
 
-    if (node.content.type == Type['DECLARE_ASSIGN']) {
+    else if (node.content.type == Type['DECLARE_ASSIGN']) {
         if (isUnique(node, root)) {
-            replace(node.argument1, node.argument2, root)
+            replaceConstant(node.argument1, node.argument2, root)
         }
         if (isUnused(node, root)) {
             remove(node, root)
         }
     }
 
-    checkConstantOperations(node)
+    if (!updated) {
+        checkConstantOperations(node)
+    }
+
     
     runOptimiser(node.argument1)
     runOptimiser(node.argument2)
@@ -91,8 +94,9 @@ function isUnused(test: SyntaxTree, node: SyntaxTree): boolean {
 
     /* Ignore declarations */
     if (node.content.type == Type['ASSIGN']) {
-        return true
+        return isUnused(test, node.argument2)
     }
+    
 
     /* If using variable */
     if (node.content.lexeme == test.argument1.argument1.content.lexeme) {
@@ -111,6 +115,12 @@ function isUnique(test: SyntaxTree, node: SyntaxTree): boolean {
 
     /* If reassigning the same variable */
     if (node.content.type == Type['ASSIGN'] && node.argument1.argument1.content.lexeme == test.argument1.argument1.content.lexeme) {
+        /* If is an operation on itself */
+        if(node.argument2.content.type == Type.PUNCTUATION) {
+            if (node.argument2.argument1.argument1.content.lexeme == test.argument1.argument1.content.lexeme) {
+                return true
+            }
+        } 
         /* If reference node, ignore */
         if (node != test) {
             /* Not unique */
@@ -122,14 +132,27 @@ function isUnique(test: SyntaxTree, node: SyntaxTree): boolean {
 
 }
 
-function replace(variable: SyntaxTree, constant: SyntaxTree, node: SyntaxTree) {
+/**
+ * returns whether to stop replacing
+ * @param variable 
+ * @param constant 
+ * @param node 
+ */
+function replaceConstant(variable: SyntaxTree, constant: SyntaxTree, node: SyntaxTree, checkAssign: boolean = false): boolean {
 
     if (node == null) {
-        return
+        return false
     }
 
-    if (node.content.type == Type['DECLARE'] || node.content.type == Type['DECLARE_ASSIGN']|| node.content.type == Type['ASSIGN']) {
+    let check: boolean = false
+
+    if (node.content.type == Type['DECLARE'] || node.content.type == Type['DECLARE_ASSIGN']) {
         /* Don't touch so they can be later removed */
+    }
+
+    else if (node.content.type == Type['ASSIGN']) {
+        /* Check if variable is reassigned */
+        check = true
     }
 
     else if (node.argument1 != null && node.argument1.content.type == Type['VARIABLE']) {
@@ -139,6 +162,9 @@ function replace(variable: SyntaxTree, constant: SyntaxTree, node: SyntaxTree) {
                 content: constant.content,
                 argument1: constant.argument1,
                 argument2: constant.argument2
+            }
+            if (checkAssign) {
+                return true
             }
         }
     }
@@ -151,11 +177,23 @@ function replace(variable: SyntaxTree, constant: SyntaxTree, node: SyntaxTree) {
                 argument1: constant.argument1,
                 argument2: constant.argument2
             }
+            if (checkAssign) {
+                return true
+            }
         }
     }
 
-    replace(variable, constant, node.argument1)
-    replace(variable, constant, node.argument2)
+    let checkLeft: boolean = replaceConstant(variable, constant, node.argument1, check)
+    if (checkLeft) {
+        return true
+    }
+
+    let checkRight: boolean = replaceConstant(variable, constant, node.argument2, check)
+    if (checkRight) {
+        return true
+    }
+
+    return false
 
 }
 

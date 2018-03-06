@@ -161,6 +161,8 @@ function parseDeclaration(): SyntaxTree {
         value = createConstant(getToken(currentIndex + 5))
         skipAhead = 6
         //TODO: check if constant is of correct type
+    } else if (getToken(currentIndex + 4).type == Type.CONSTANT) {
+        throw `Expected '=' at ${getLocation(getToken(currentIndex + 1))}`
     } else {
         action = DECLARE
         value = null
@@ -257,13 +259,41 @@ function parseExpression(): SyntaxTree {
     /* Check type of operation */
     if (operation.lexeme != "=") {
         if (operation.lexeme == "++" || operation.lexeme == "--") {
+            if (operation.lexeme == "++") {
+                operation = {
+                    type: Type.PUNCTUATION,
+                    name: "PLUS",
+                    lexeme: "+",
+                    location: operation.location
+                }
+            } else {
+                operation = {
+                    type: Type.PUNCTUATION,
+                    name: "MINUS",
+                    lexeme: "-",
+                    location: operation.location
+                }
+            }            
             expression = {
-                content: operation,
+                content: ASSIGN,
                 argument1: {
-                    content: result
+                    content: VARIABLE,
+                    argument1: { content: result },
+                    argument2: { content: type }
                 },
                 argument2: {
-                    content: type
+                    content: operation,
+                    argument1: { 
+                        content: VARIABLE,
+                        argument1: { content: result },
+                        argument2: { content: type }
+                    },
+                    argument2: createConstant({
+                        type: Type.CONSTANT,
+                        name: "number",
+                        lexeme: "1",
+                        location: null
+                    })
                 }
             }
             adjust = 2
@@ -275,37 +305,54 @@ function parseExpression(): SyntaxTree {
         let type1: Token = getType(address1, root)
     
         let operation: Token = getToken(currentIndex + 3)
-    
-        let address2: Token = getToken(currentIndex + 4)
-        let type2: Token = getType(address2, root)
 
-        if (type1.name != type2.name) {
-            throw `${address1.lexeme} and ${address2.lexeme} are not of same type at ${getLocation(operation)}.`
-        }
-    
-        adjust = 5
-    
-        expression = {
-            content: ASSIGN,
-            argument1: {
-                content: VARIABLE,
-                argument1: { content: result },
-                argument2: { content: type }
-            },
-            argument2: {
-                content: operation,
-                argument1: { 
+        if (operation.type != Type.PUNCTUATION) {
+            adjust = 3
+            expression = {
+                content: ASSIGN,
+                argument1: {
                     content: VARIABLE,
-                    argument1: { content: address1 },
-                    argument2: { content: type1 }
+                    argument1: { content: result },
+                    argument2: { content: type }
                 },
                 argument2: { 
                     content: VARIABLE,
-                    argument1: { content: address2 },
-                    argument2: { content: type2 }
+                    argument1: { content: address1 },
+                    argument2: { content: type1 }
                 }
             }
-        }
+        } else {
+            let address2: Token = getToken(currentIndex + 4)
+            let type2: Token = getType(address2, root)
+
+            if (type1.name != type2.name) {
+                throw `${address1.lexeme} and ${address2.lexeme} are not of same type at ${getLocation(operation)}.`
+            }
+        
+            adjust = 5
+        
+            expression = {
+                content: ASSIGN,
+                argument1: {
+                    content: VARIABLE,
+                    argument1: { content: result },
+                    argument2: { content: type }
+                },
+                argument2: {
+                    content: operation,
+                    argument1: { 
+                        content: VARIABLE,
+                        argument1: { content: address1 },
+                        argument2: { content: type1 }
+                    },
+                    argument2: { 
+                        content: VARIABLE,
+                        argument1: { content: address2 },
+                        argument2: { content: type2 }
+                    }
+                }
+            }
+        }    
     }
 
     currentIndex += adjust
