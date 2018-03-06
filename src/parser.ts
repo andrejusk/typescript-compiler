@@ -209,10 +209,21 @@ function parsePrint(): SyntaxTree {
 
     let action: Token = getToken(currentIndex + 2)
     let identifier: Token = getToken(currentIndex + 4)
+    let value: SyntaxTree    
+
+    if (identifier.name == 'string') {
+        value = createConstant(identifier)
+    } else {
+        value = {
+            content: VARIABLE,
+            argument1: { content: identifier },
+            argument2: { content: getType(identifier) }
+        }
+    }
     currentIndex += 6
     return {
         content: action,
-        argument1: createConstant(identifier)
+        argument1: value
     }
 
 }
