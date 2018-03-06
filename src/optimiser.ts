@@ -24,6 +24,31 @@ function runOptimiser(node: SyntaxTree) {
         return
     }
 
+    /* Optimise tree */
+    if (node.argument1 != null && node.argument1.content.type == Type['SEQUENCE']) {
+        if (node.argument1.argument2 == null) {
+            updated = true
+            node.argument1 = node.argument1.argument1
+        }
+        else if (node.argument1.argument1 == null) {
+            updated = true
+            node.argument1 = node.argument1.argument2
+        }
+    } 
+    
+    /* Optimise tree */
+    if (node.argument2 != null && node.argument2.content.type == Type['SEQUENCE']) {
+        if (node.argument2.argument2 == null) {
+            updated = true
+            node.argument2 = node.argument2.argument1
+        }
+        else if (node.argument2.argument1 == null) {
+            updated = true
+            node.argument2 = node.argument2.argument2
+        }
+    }
+
+
     if (node.content.type == Type['DECLARE'] && isUnused(node, root)) {
         remove(node, root)
     }
