@@ -212,7 +212,11 @@ function parsePrint(): SyntaxTree {
     currentIndex += 6
     return {
         content: action,
-        argument1: createConstant(identifier)
+        argument1: {
+            content: VARIABLE,
+            argument1: { content: identifier },
+            argument2: { content: getType(identifier) }
+        }
     }
 
 }
