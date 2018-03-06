@@ -9,12 +9,11 @@ export function optimise(tree: SyntaxTree, debug: boolean = false): SyntaxTree {
     do {
         updated = false
         runOptimiser(root)
-
-        if (debug) {
-            logTree(root)
-            console.log('\n\n\n')
-        }
     } while(updated)
+
+    if (debug) {
+        logTree(root)
+    }
 
     return root
 }
