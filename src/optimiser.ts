@@ -197,7 +197,15 @@ function checkConstantOperations(node: SyntaxTree) {
                 value1 = Number(node.argument1.argument1.argument1.content.lexeme)
                 value2 = Number(node.argument1.argument2.argument1.content.lexeme)
                 
-                result = value1 + value2
+                if (node.argument1.content.name == 'PLUS') {
+                    result = value1 + value2
+                } else if (node.argument1.content.name == 'MINUS') {
+                    result = value1 - value2
+                } else if (node.argument1.content.name == 'ASTERISK') {
+                    result = value1 * value2
+                } else {
+                    throw 'what hte heck'
+                }
 
                 updated = true
 
@@ -232,7 +240,15 @@ function checkConstantOperations(node: SyntaxTree) {
                 value1 = Number(node.argument2.argument1.argument1.content.lexeme)
                 value2 = Number(node.argument2.argument2.argument1.content.lexeme)
                 
-                result = value1 + value2
+                if (node.argument2.content.name == 'PLUS') {
+                    result = value1 + value2
+                } else if (node.argument2.content.name == 'MINUS') {
+                    result = value1 - value2
+                } else if (node.argument2.content.name == 'ASTERISK') {
+                    result = value1 * value2
+                } else {
+                    throw 'what hte heck part 2 electric boogaloo'
+                }
 
                 updated = true
 
