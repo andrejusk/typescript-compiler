@@ -235,6 +235,9 @@ function parsePrint(): SyntaxTree {
  * 0 1 2 3 4
  * a = b + c
  * 
+ * 0 1 2
+ * a = b
+ * 
  * 01
  * a++
  * a--
@@ -306,8 +309,23 @@ function parseExpression(): SyntaxTree {
     
         let operation: Token = getToken(currentIndex + 3)
 
+        /* Assign */
         if (operation.type != Type.PUNCTUATION) {
             adjust = 3
+
+            let argument2: SyntaxTree
+
+            /* Constant */
+            if (address1.type == Type.CONSTANT) {
+                argument2 = createConstant(address1)
+            /* Identifier */
+            } else {
+                argument2 = { 
+                    content: VARIABLE,
+                    argument1: { content: address1 },
+                    argument2: { content: type1 }
+                }
+            }
             expression = {
                 content: ASSIGN,
                 argument1: {
@@ -315,11 +333,7 @@ function parseExpression(): SyntaxTree {
                     argument1: { content: result },
                     argument2: { content: type }
                 },
-                argument2: { 
-                    content: VARIABLE,
-                    argument1: { content: address1 },
-                    argument2: { content: type1 }
-                }
+                argument2: argument2
             }
         } else {
             let address2: Token = getToken(currentIndex + 4)
