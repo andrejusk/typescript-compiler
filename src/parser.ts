@@ -253,15 +253,14 @@ function parseExpression(): SyntaxTree {
         throw `${result.lexeme} not declared at ${getLocation(result)}.`
     }
 
-    if (type.name != "NUMBER") {
-        throw `${result.lexeme} is not of number type.` 
-    }
-
     let operation: Token = getToken(currentIndex + 1)
 
     /* Check type of operation */
     if (operation.lexeme != "=") {
         if (operation.lexeme == "++" || operation.lexeme == "--") {
+            if (type.name != "NUMBER") {
+                throw `${result.lexeme} is not of number type.` 
+            }
             if (operation.lexeme == "++") {
                 operation = {
                     type: Type.PUNCTUATION,
@@ -339,6 +338,10 @@ function parseExpression(): SyntaxTree {
             let address2: Token = getToken(currentIndex + 4)
             let type2: Token = getType(address2, root)
 
+            if (type.name != "NUMBER") {
+                throw `${result.lexeme} is not of number type.` 
+            }
+            
             if (type1.name != type2.name) {
                 throw `${address1.lexeme} and ${address2.lexeme} are not of same type at ${getLocation(operation)}.`
             }
