@@ -361,6 +361,16 @@ function parseExpression(): SyntaxTree {
 
 function getType(target: Token, tree: SyntaxTree = root): Token {
     let result: Token = null
+    /* Constant */
+    if (target.type == Type.CONSTANT) {
+        return { 
+            type: Type.TYPE, 
+            name: target.name, 
+            lexeme: target.name, 
+            location: null 
+        }
+    }
+    /* Variable */
     if (tree.argument1 != null) {
         if (tree.argument1.content.lexeme == target.lexeme) {
             return tree.argument2.content
