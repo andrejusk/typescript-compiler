@@ -68,8 +68,6 @@ try {
     console.log(returned.toString())
 
 } catch (e) {
-    /* Incorrect usage */
-    //log("Usage: ts-node index.js <file>")
     logError(e)
     if (debug) {
         logError(`Stack: ${(<Error>e).stack}`)

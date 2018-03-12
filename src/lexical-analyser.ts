@@ -129,10 +129,7 @@ function readNext(): Token {
     return read()
 }
 
-/** 
- * 
- * @returns
- */
+/** Reads and returns next word. */
 function readNextWord(): Token {
     let word: string = ''
     let token: Token

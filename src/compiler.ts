@@ -1,7 +1,7 @@
 import { Type } from './types'
 
 export function compile(tree: SyntaxTree): string {
-    //logTree(root)
+    
     let code: string
 
     if (tree == null || tree == undefined) {
