@@ -1,10 +1,9 @@
 
 import fs = require('fs')
-import colors = require('colors/safe')
 import rimraf = require('rimraf')
 import process = require('process')
 
-import { logError, logInfo, logCode, logOutput } from './src/debug-print'
+import { logError, logInfo } from './src/debug-print'
 import lex = require('./src/lexical-analyser')
 import parser = require('./src/parser')
 import compiler = require('./src/compiler')

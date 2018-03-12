@@ -3,7 +3,6 @@ import { Type, WHITESPACE, PUNCTUATION, RESERVED, TYPES } from './types'
 import { logToken } from './debug-print'
 
 import fs = require('fs')
-import { getMaxListeners } from 'cluster'
 
 let content: string[]
 let currentCharacterIndex: number = 0

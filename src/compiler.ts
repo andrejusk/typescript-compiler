@@ -1,5 +1,4 @@
 import { Type } from './types'
-import { logTree, logToken } from './debug-print'
 
 export function compile(tree: SyntaxTree): string {
     //logTree(root)
