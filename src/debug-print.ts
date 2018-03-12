@@ -59,9 +59,15 @@ export function logTree(node: SyntaxTree, indent: number = 0, side: string = ">"
 
     /* Infix traversal */
     logTree(node.argument1, indent + 1, '/')
-    console.log(
-        prefix + (`[${colors.magenta(Type[node.content.type])}] - ${colors.cyan(node.content.name)}, ${colors.grey(node.content.lexeme)}\t`)
-    )
+    if (node.content != null) {
+        console.log(
+            prefix + (`[${colors.magenta(Type[node.content.type])}] - ${colors.cyan(node.content.name)}, ${colors.grey(node.content.lexeme)}\t`)
+        )
+    } else {
+        console.log(
+            prefix + (colors.yellow(`[NULL]\t`))
+        )
+    }
     logTree(node.argument2, indent + 1, '\\')
 }
 

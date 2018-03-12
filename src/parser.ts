@@ -235,6 +235,9 @@ function parsePrint(): SyntaxTree {
  * 0 1 2 3 4
  * a = b + c
  * 
+ * 0 1 2
+ * a = b
+ * 
  * 01
  * a++
  * a--
@@ -250,15 +253,14 @@ function parseExpression(): SyntaxTree {
         throw `${result.lexeme} not declared at ${getLocation(result)}.`
     }
 
-    if (type.name != "NUMBER") {
-        throw `${result.lexeme} is not of number type.` 
-    }
-
     let operation: Token = getToken(currentIndex + 1)
 
     /* Check type of operation */
     if (operation.lexeme != "=") {
         if (operation.lexeme == "++" || operation.lexeme == "--") {
+            if (type.name != "NUMBER") {
+                throw `${result.lexeme} is not of number type.` 
+            }
             if (operation.lexeme == "++") {
                 operation = {
                     type: Type.PUNCTUATION,
@@ -306,8 +308,23 @@ function parseExpression(): SyntaxTree {
     
         let operation: Token = getToken(currentIndex + 3)
 
+        /* Assign */
         if (operation.type != Type.PUNCTUATION) {
             adjust = 3
+
+            let argument2: SyntaxTree
+
+            /* Constant */
+            if (address1.type == Type.CONSTANT) {
+                argument2 = createConstant(address1)
+            /* Identifier */
+            } else {
+                argument2 = { 
+                    content: VARIABLE,
+                    argument1: { content: address1 },
+                    argument2: { content: type1 }
+                }
+            }
             expression = {
                 content: ASSIGN,
                 argument1: {
@@ -315,16 +332,16 @@ function parseExpression(): SyntaxTree {
                     argument1: { content: result },
                     argument2: { content: type }
                 },
-                argument2: { 
-                    content: VARIABLE,
-                    argument1: { content: address1 },
-                    argument2: { content: type1 }
-                }
+                argument2: argument2
             }
         } else {
             let address2: Token = getToken(currentIndex + 4)
             let type2: Token = getType(address2, root)
 
+            if (type.name != "NUMBER") {
+                throw `${result.lexeme} is not of number type.` 
+            }
+            
             if (type1.name != type2.name) {
                 throw `${address1.lexeme} and ${address2.lexeme} are not of same type at ${getLocation(operation)}.`
             }
@@ -361,6 +378,16 @@ function parseExpression(): SyntaxTree {
 
 function getType(target: Token, tree: SyntaxTree = root): Token {
     let result: Token = null
+    /* Constant */
+    if (target.type == Type.CONSTANT) {
+        return { 
+            type: Type.TYPE, 
+            name: target.name, 
+            lexeme: target.name, 
+            location: null 
+        }
+    }
+    /* Variable */
     if (tree.argument1 != null) {
         if (tree.argument1.content.lexeme == target.lexeme) {
             return tree.argument2.content
