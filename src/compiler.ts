@@ -1,8 +1,7 @@
 import { Type } from './types'
-import { logTree, logToken } from './debug-print'
 
 export function compile(tree: SyntaxTree): string {
-    //logTree(root)
+    
     let code: string
 
     if (tree == null || tree == undefined) {

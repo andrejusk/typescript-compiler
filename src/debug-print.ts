@@ -53,7 +53,6 @@ export function logTree(node: SyntaxTree, indent: number = 0, side: string = ">"
 
     /* Don't print null nodes */
     if (node == null) {
-        //console.log(prefix + colors.grey("null"))
         return
     }
 

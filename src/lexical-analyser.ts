@@ -3,7 +3,6 @@ import { Type, WHITESPACE, PUNCTUATION, RESERVED, TYPES } from './types'
 import { logToken } from './debug-print'
 
 import fs = require('fs')
-import { getMaxListeners } from 'cluster'
 
 let content: string[]
 let currentCharacterIndex: number = 0
@@ -130,10 +129,7 @@ function readNext(): Token {
     return read()
 }
 
-/** 
- * 
- * @returns
- */
+/** Reads and returns next word. */
 function readNextWord(): Token {
     let word: string = ''
     let token: Token

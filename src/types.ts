@@ -106,6 +106,7 @@ export const RESERVED: SymbolMap = {
     'LOG':          'log'
 }
 
+/** TYPED - Type Definitions */
 export const TYPES: SymbolMap = {
     'NUMBER':       'number',
     'STRING':       'string',

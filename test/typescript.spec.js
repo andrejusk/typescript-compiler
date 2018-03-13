@@ -2,7 +2,6 @@
 var { exec } = require('child_process')
 var chai = require('chai')
 var expect = chai.expect
-var mocha = require('mocha')
 
 let scriptFolder = '\\scripts\\'
 
