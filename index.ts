@@ -6,7 +6,7 @@ import process = require('process')
 import { logError, logInfo } from './src/debug-print'
 import lex = require('./src/lexical-analyser')
 import parser = require('./src/parser')
-import compiler = require('./src/compiler')
+import generator = require('./src/code-generator')
 import optimiser = require('./src/optimiser')
 import child_process = require('child_process')
 
@@ -48,7 +48,7 @@ try {
 
     /* Compile C code from tree */
     log('Running compiler...')
-    let code: string = compiler.compile(optimisedTree)
+    let code: string = generator.compile(optimisedTree)
     log(`Compiled code: \n${code}`)
 
     /* Write C code to file */
