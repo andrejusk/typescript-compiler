@@ -159,12 +159,12 @@ function parseDeclaration(): SyntaxTree {
     /* Assign operator */
     if (getToken(currentIndex + 4).lexeme == PUNCTUATION['EQUALS']) {
         if (getToken(currentIndex + 6).lexeme == PUNCTUATION['DOT']) {
-            throw `Number type must be an integer.`
+            throw `Number type must be an integer at ${getLocation(getToken(currentIndex + 5))}`
         }
         action = DECLARE_ASSIGN
         valueToken = getToken(currentIndex + 5)
         if (type.name.toString().toLowerCase() != valueToken.name.toString().toLowerCase()) {
-            throw `${valueToken.name} cannot be assigned to ${type.name}`
+            throw `${valueToken.name} cannot be assigned to ${type.name} at ${getLocation(getToken(currentIndex + 4))}`
         }        
         value = createConstant(valueToken)
         skipAhead = 6
