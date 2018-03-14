@@ -242,7 +242,7 @@ function checkConstantOperations(node: SyntaxTree) {
                 } else if (node.argument1.content.name == 'ASTERISK') {
                     result = value1 * value2
                 } else {
-                    throw 'what hte heck'
+                    throw 'Unsupported operation.'
                 }
 
                 updated = true
@@ -261,9 +261,9 @@ function checkConstantOperations(node: SyntaxTree) {
                         content: node.argument1.argument1.argument2.content
                     }
                 }
-            /* String perhaps */
+            /* String */
             } else {
-
+                throw 'Unsupported operation.'
             }                
         }
     }
@@ -285,7 +285,7 @@ function checkConstantOperations(node: SyntaxTree) {
                 } else if (node.argument2.content.name == 'ASTERISK') {
                     result = value1 * value2
                 } else {
-                    throw 'what hte heck part 2 electric boogaloo'
+                    throw 'Unsupported operation.'
                 }
 
                 updated = true
@@ -304,9 +304,9 @@ function checkConstantOperations(node: SyntaxTree) {
                         content: node.argument2.argument1.argument2.content
                     }
                 }
-            /* String perhaps */
+            /* String */
             } else {
-
+                throw 'Unsupported operation.' 
             }                
         }
     }
