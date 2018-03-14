@@ -153,14 +153,21 @@ function parseDeclaration(): SyntaxTree {
     let identifier: Token = getToken(currentIndex + 1)
     let type: Token = getToken(currentIndex + 3)
 
+    let valueToken: Token
     let value: SyntaxTree
 
     /* Assign operator */
     if (getToken(currentIndex + 4).lexeme == PUNCTUATION['EQUALS']) {
+        if (getToken(currentIndex + 6).lexeme == PUNCTUATION['DOT']) {
+            throw `Number type must be an integer.`
+        }
         action = DECLARE_ASSIGN
-        value = createConstant(getToken(currentIndex + 5))
+        valueToken = getToken(currentIndex + 5)
+        if (type.name.toString().toLowerCase() != valueToken.name.toString().toLowerCase()) {
+            throw `${valueToken.name} cannot be assigned to ${type.name}`
+        }        
+        value = createConstant(valueToken)
         skipAhead = 6
-        //TODO: check if constant is of correct type
     } else if (getToken(currentIndex + 4).type == Type.CONSTANT) {
         throw `Expected '=' at ${getLocation(getToken(currentIndex + 1))}`
     } else {
