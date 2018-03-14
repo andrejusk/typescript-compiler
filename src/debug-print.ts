@@ -4,28 +4,7 @@ import colors = require('colors/safe')
 
 /** Debug Token print function */ 
 export function logToken(Token: Token): void {
-    let nameColor: colors
-
-    switch (Token.type) {
-        case Type.CONSTANT:
-            nameColor = colors.green
-            break
-        case Type.IDENTIFIER:
-            nameColor = colors.cyan
-            break
-        case Type.PUNCTUATION:
-            nameColor = colors.white
-            break
-        case Type.TYPE:
-        case Type.RESERVED:
-            nameColor = colors.blue
-            break
-        case Type.WHITESPACE:
-
-        default:
-            nameColor = colors.grey
-            break
-    }
+    let nameColor: colors = getColour(Token)
 
     console.log(
         colors.blue(`  >>`) +
@@ -56,11 +35,19 @@ export function logTree(node: SyntaxTree, indent: number = 0, side: string = ">"
         return
     }
 
+    let nameColor: colors = getColour(node.content)
+
+    let printName: boolean = (Type[node.content.type] != node.content.name)
+    let printLex: boolean = (node.content.lexeme != null) 
+        && (node.content.lexeme.toString().toLowerCase() != node.content.name.toString().toLowerCase())
+
     /* Infix traversal */
     logTree(node.argument1, indent + 1, '/')
     if (node.content != null) {
         console.log(
-            prefix + (`[${colors.magenta(Type[node.content.type])}] - ${colors.cyan(node.content.name)}, ${colors.grey(node.content.lexeme)}\t`)
+            prefix + (`[${nameColor(Type[node.content.type])}]`) + 
+            (printName ? (` - ${colors.cyan(node.content.name)}`) : "") +
+            (printLex ? (`, ${colors.grey(node.content.lexeme)}\t`) : "")
         )
     } else {
         console.log(
@@ -87,4 +74,34 @@ export function logError(message: string) {
 export function logCode(code: string) {
     console.log(colors.yellow('[OUTPUT] ') + 'Compiled code:')
     console.log('\t' + code.split('\n').join('\n\t'))
+}
+
+function getColour(Token: Token): colors {
+    switch (Token.type) {
+        case Type.VARIABLE:
+        case Type.CONSTANT:
+            return colors.green
+
+        case Type.IDENTIFIER:
+            return colors.cyan
+
+        case Type.PUNCTUATION:
+            return colors.white
+
+        case Type.TYPE:
+        case Type.RESERVED:
+            return colors.blue
+
+        case Type.START:
+        case Type.END:
+        case Type.DECLARE:
+        case Type.DECLARE_ASSIGN:
+        case Type.ASSIGN:
+            return colors.magenta
+
+        case Type.WHITESPACE:
+
+        default:
+            return colors.grey
+    }
 }
