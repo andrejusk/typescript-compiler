@@ -242,7 +242,7 @@ function checkConstantOperations(node: SyntaxTree) {
                 } else if (node.argument1.content.name == 'ASTERISK') {
                     result = value1 * value2
                 } else {
-                    throw 'Unsupported operation.'
+                    throw `Unsupported operation '${node.argument1.content.name}'.`
                 }
 
                 updated = true
@@ -263,7 +263,7 @@ function checkConstantOperations(node: SyntaxTree) {
                 }
             /* String */
             } else {
-                throw 'Unsupported operation.'
+                throw `Unsupported type ${node.argument1.argument1.argument2.content.lexeme}.`
             }                
         }
     }
@@ -285,7 +285,7 @@ function checkConstantOperations(node: SyntaxTree) {
                 } else if (node.argument2.content.name == 'ASTERISK') {
                     result = value1 * value2
                 } else {
-                    throw 'Unsupported operation.'
+                    throw `Unsupported operation '${node.argument2.content.name}'.`
                 }
 
                 updated = true
@@ -306,7 +306,7 @@ function checkConstantOperations(node: SyntaxTree) {
                 }
             /* String */
             } else {
-                throw 'Unsupported operation.' 
+                throw `Unsupported type '${node.argument2.argument1.argument2.content.lexeme}'.`
             }                
         }
     }
