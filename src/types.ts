@@ -84,6 +84,7 @@ export const PUNCTUATION: SymbolMap = {
     'ASTERISK':     '*',
     'EXCLAMATION':  '!',
     'AMPERSAND':    '&',
+    'POWER':        '^',
     'EQUALS':       '=',
     'PLUS':         '+',
     'MINUS':        '-',  
