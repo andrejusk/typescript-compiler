@@ -67,7 +67,7 @@ export function compile(tree: SyntaxTree): string {
         } else if (tree.argument1.argument2.content.lexeme == "number") {
             type = "%d"
         } else {
-            throw `Unsupported type '${tree.argument1.argument2.content.lexeme}'.`
+            throw `Unsupported type '${tree.argument1.argument2.content.lexeme}' in LOG.`
         }
         return `printf("${type}", ${compile(tree.argument1)});\n`
     }

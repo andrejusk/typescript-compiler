@@ -358,7 +358,7 @@ function parseExpression(): SyntaxTree {
             }
 
             if (type1.name != type2.name) {
-                throw `${address1.lexeme} and ${address2.lexeme} are not of same type at ${getLocation(operation)}.`
+                throw `${address1.lexeme} (${type1.name}) and ${address2.lexeme} (${type2.name}) are not of same type at ${getLocation(operation)}.`
             }
         
             adjust = 5

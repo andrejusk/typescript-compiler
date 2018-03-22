@@ -263,7 +263,7 @@ function checkConstantOperations(node: SyntaxTree) {
                 }
             /* String */
             } else {
-                throw `Unsupported type ${node.argument1.argument1.argument2.content.lexeme}.`
+                throw `Unsupported type ${node.argument1.argument1.argument2.content.lexeme} in operation.`
             }                
         }
     }
@@ -306,7 +306,7 @@ function checkConstantOperations(node: SyntaxTree) {
                 }
             /* String */
             } else {
-                throw `Unsupported type '${node.argument2.argument1.argument2.content.lexeme}'.`
+                throw `Unsupported type '${node.argument2.argument1.argument2.content.lexeme}' in operation.`
             }                
         }
     }
