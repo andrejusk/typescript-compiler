@@ -313,6 +313,10 @@ function parseExpression(): SyntaxTree {
         let address1: Token = getToken(currentIndex + 2)
         let type1: Token = getType(address1, root)
     
+        if (type1 == null) {
+            throw `${address1.lexeme} not declared at ${getLocation(address1)}.`
+        }
+
         let operation: Token = getToken(currentIndex + 3)
 
         /* Assign */
@@ -345,12 +349,16 @@ function parseExpression(): SyntaxTree {
             let address2: Token = getToken(currentIndex + 4)
             let type2: Token = getType(address2, root)
 
+            if (type2 == null) {
+                throw `${address2.lexeme} not declared at ${getLocation(address2)}.`
+            }
+
             if (type.name != "NUMBER") {
                 throw `${result.lexeme} is not of number type.` 
             }
 
             if (type1.name != type2.name) {
-                throw `${address1.lexeme} and ${address2.lexeme} are not of same type at ${getLocation(operation)}.`
+                throw `${address1.lexeme} (${type1.name}) and ${address2.lexeme} (${type2.name}) are not of same type at ${getLocation(operation)}.`
             }
         
             adjust = 5
