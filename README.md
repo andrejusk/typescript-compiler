@@ -108,4 +108,4 @@ variables, as seen in Figure 7.
 *Figure 7. Assign Statements with Arithmetic*
 
 Along with addition, other available arithmetic operations in the subset are:
-subtraction, multiplication, incrementation, decrementation. 
+subtraction, multiplication, incrementation, decrementation.
