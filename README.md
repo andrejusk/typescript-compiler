@@ -10,6 +10,21 @@ See individual `.md`s for detail on the:
 * [Code Generator   ](./docs/code-generator.md)
 * [Code Optimiser   ](./docs/optimiser.md)
 
+## Usage
+
+Install dependencies:
+
+* `npm i`
+* A form of g++ in ENV (e.g. MinGW)
+
+For hello world: 
+
+`npm start .\test\scripts\hello-world.ts`
+
+Or, in general:
+
+`npm start <script>`
+
 ## Introduction
 
 The scope of this coursework is to implement a compiler for a source language that
