@@ -14,9 +14,7 @@ const tempFolder = `.\\tmp-${process.pid}\\`
 const tempSource = 'compiled.c'
 const tempCompiled = 'compiled.exe'
 
-const gccDir = 'C:\\MinGW\\bin\\'
-const gcc = 'g++.exe'
-const compile = `${gccDir}${gcc} ${tempFolder}${tempSource} -o ${tempFolder}${tempCompiled}`
+const compile = `g++ ${tempFolder}${tempSource} -o ${tempFolder}${tempCompiled}`
 
 /* <command> <app> <target file> <debug> */
 let filePath: string = (process.argv.length > 1) ? process.argv[2] : null
